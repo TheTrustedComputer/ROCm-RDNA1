@@ -24,7 +24,7 @@ TBA.
 
 ## Shoutouts
 
-I would like to thank GitHub contributors [xuhuisheng](https://github.com/xuhuisheng) for providing the initial build scripts, [lamikr](https://github.com/lamikr) for introducing several, novel ROCm patches to get multiple cards working at once, and the [Gentoo Linux](https://gentoo.org) team for making hipBLASLt a dummy library for unsupported architectures. Without them, this repository would not have been possible.
+I would like to thank GitHub contributors [xuhuisheng](https://github.com/xuhuisheng) for providing the initial ROCm 5.4 build scripts, [lamikr](https://github.com/lamikr) for introducing several, novel patches to get multiple cards working at once, and the [Gentoo Linux](https://gentoo.org) team for making hipBLASLt a dummy library for unsupported architectures. Without them, this repository would not have been possible.
 
 ## Required Components
 ### PyTorch
