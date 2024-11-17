@@ -1,6 +1,6 @@
 # ROCm-RDNA1
 
-ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set. Note that RDNA1 GPUs are **NOT** supported. The only official way is to compile ROCm for the architecture and hope for the best. In practice, most machine learning frameworks function perfectly despite the lack of official support.
+ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set. Note that RDNA1 GPUs are **NOT** supported. The only official way is to compile ROCm for the architecture and hope for the best. Theoretically, this is not guaranteed to work. However, in practice, most machine learning frameworks function perfectly despite lacking official support.
 
 The latest point release has been tested on Arch Linux in a Docker container using AMD's fork of LLVM/Clang; only GCC is used to build their LLVM fork. As for ROCm 5.4, it was tested with Debian 12 Bookworm utilizing similar techniques.
 
