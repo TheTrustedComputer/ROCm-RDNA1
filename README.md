@@ -4,9 +4,9 @@ ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 
 
 Since we have two 8GB AMD Radeon RX 5500 XTs for ML purposes, we must set the GPU target to `gfx1012` to ensure compatibility without hacky workarounds with `HSA_OVERRIDE_GFX_VERSION` and so on. The 5600 XT and 5700 XT correspond to `gfx1010` respectively, so choose the matching target with your AMD GPU.
 
-The latest point release has been tested on Arch Linux in a Docker container using AMD's fork of LLVM/Clang; only GCC is used to build their LLVM fork. As for ROCm 5.4, it was tested with Debian 12 Bookworm utilizing similar techniques. The script assumes you have all third-party dependencies like Protobuf and MAGMA. If not, download them as it will fail midway through.
+The latest point release has been tested on Arch Linux in a Docker container using AMD's fork of LLVM/Clang; only GCC is used to build their LLVM fork. As for ROCm 5.4, it was tested with Debian 12 Bookworm utilizing similar techniques. The script assumes you have all third-party dependencies like Protobuf and MAGMA. If not, download them as it **WILL** fail midway through.
 
-The main branch contains the build script, patches, and Dockerfiles for the most recent version of ROCm. After the next major release, it will be moved to a branch dedicated to it.
+The main branch contains the build script, patches, and Dockerfiles for the most recent version of ROCm. After the next major release, it'll be moved to a branch dedicated to it.
 
 ## Docker Installation
 
