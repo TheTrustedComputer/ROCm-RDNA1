@@ -6,6 +6,8 @@ Since we have two 8GB AMD Radeon RX 5500 XTs for ML purposes, we must set the GP
 
 The latest point release has been tested on Arch Linux in a Docker container using AMD's fork of LLVM/Clang; only GCC is used to build their LLVM fork. As for ROCm 5.4, it was tested with Debian 12 Bookworm utilizing similar techniques.
 
+The main branch contains the build script, patches, and Dockerfiles for the most recent version of ROCm. After the next major release, it will be moved to a branch dedicated to it.
+
 ## Docker Installation
 
 We recommend installing Docker on your Linux machine for easy reproducibility and testability. Consult the package manager for your distribution on how to install it. For example, on Debian-based distributions:
