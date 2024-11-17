@@ -1,6 +1,6 @@
 # ROCm-RDNA1
 
-ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set. Note that RDNA1 GPUs are **NOT** supported by AMD. The only real option for users is to compile ROCm for the architecture and hope for the best. Theoretically, this isn't guaranteed to work, even if it does. However, in practice, most machine learning frameworks function perfectly despite lacking official support. Other ROCm components such as hipfort and ROCgdb aren't necessary for PyTorch or ONNX Runtime, so they're excluded from the script.
+ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set. Note that RDNA1 GPUs are **NOT** supported by AMD. The only real option for users is to compile ROCm for the architecture and hope for the best. Theoretically, this isn't guaranteed to work, even if it does. However, in practice, most machine learning frameworks function perfectly despite lacking official support. Other ROCm components such as hipfort and rocALUTION aren't necessary for PyTorch or ONNX Runtime, so they're excluded from the script.
 
 Since we have two 8GB AMD Radeon RX 5500 XTs for ML purposes, we must set the GPU target to `gfx1012` to ensure compatibility without hacky workarounds with `HSA_OVERRIDE_GFX_VERSION` and so on. The 5600 XT and 5700 XT correspond to `gfx1010` respectively, so choose the matching target with your AMD GPU.
 
