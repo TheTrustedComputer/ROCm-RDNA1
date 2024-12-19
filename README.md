@@ -109,15 +109,15 @@ We've attached a `docker-compose.yaml` file to build each step of the Docker ima
 
 ## Unit Test Results
 
-| GPU Target | Version | OS Image | HIP | hip/rocBLAS | hipBLASLt | hipCUB | hip/rocFFT | hip/rocRAND | hip/rocSOLVER | hip/rocSPARSE | RCCL | rocPRIM | rocThrust | rocTracer | CK | MIOpen | MIGraphX | 
+| Target | Version | OS | HIP | BLAS | hipBLASLt | CUB | FFT | RAND | SOLVER | SPARSE | RCCL | PRIM | Thrust | Tracer | CK | MIOpen | MIGraphX | 
 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | -
 | gfx1012 | 5.4.x | Debian 12 | 🔵 | 🟢 | 🔴 | 🟢 | 🔵 | 🔵 | 🟡 | 🟢 | 🟢 | 🔵 | 🔵 | 🟢 | 🔴 | 🟢 | 🟢 
-| gfx1012 | 6.2.x | Arch Linux | 🔵 | 🔵 | 🔴 | 🟢 | 🟢 | 🔵 | 🔵 | 🟢 | 🟡 | 🟢 |  🔵 | 🔵  | 🟢 | 🟢 | 🔵
+| gfx1012 | 6.2.x | Ubuntu 24.04 | 🔵 | 🔵 | 🔴 | 🟢 | 🟢 | 🔵 | 🔵 | 🟢 | 🟡 | 🟢 |  🔵 | 🔵  | 🟢 | 🟢 | 🔵
 | gfx1012 | 6.3.x | Arch Linux | 🔵 | ? | 🔴 | ? | ? | ? | ? | ? | ? | ? | ? | 🔵 | ? | ? | ?
 
 🔵 Passes all unit tests\
 🟢 Passes most unit tests\
-🟡 Unable to test but works\
+🟡 Untested or cannot be tested\
 🔴 Not applicable or supported
 
 Some failures resulted in allocating too much VRAM to the device, which we excluded in the test results. We do not consider these to be bugs, but rather a consequence of having older, now unsupported hardware with less memory in a fast-paced ML ecosystem.
