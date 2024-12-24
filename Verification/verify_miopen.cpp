@@ -3,9 +3,8 @@
 
 int main(void)
 {
-    bool _;
     constexpr int n = 1; // Batch size
-    constexpr int c = 1; // Number of channels
+    constexpr int c = 1; // Channels
     constexpr int h = 5; // Height
     constexpr int w = 5; // Width
 
@@ -20,9 +19,12 @@ int main(void)
     };
 
     // Kernel data
-    constexpr int k = 1; // Number of filters
+    constexpr int k = 1; // Filters
     constexpr int kh = 3; // Kernel height
     constexpr int kw = 3; // Kernel width
+    
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
     
     float kernel_data[k * c * kh * kw] = \
     {
@@ -35,13 +37,6 @@ int main(void)
     float *d_output;
     float *d_kernel;
     
-    _ = hipMalloc(&d_input, n * c * h * w * sizeof(*d_input));
-    _ = hipMalloc(&d_output, n * k * (h - kh + 1) * (w - kw + 1) * sizeof(*d_output));
-    _ = hipMalloc(&d_kernel, k * c * kh * kw * sizeof(*d_kernel));
-
-    _ = hipMemcpy(d_input, input_data, n * c * h * w * sizeof(*input_data), hipMemcpyHostToDevice);
-    _ = hipMemcpy(d_kernel, kernel_data, k * c * kh * kw * sizeof(*kernel_data), hipMemcpyHostToDevice);
-    
     miopenHandle_t handle;
     miopenTensorDescriptor_t input_desc;
     miopenTensorDescriptor_t output_desc;
@@ -52,8 +47,31 @@ int main(void)
     size_t workspace_size;
     void *d_workspace;
     
-    const float alpha = 1.0f;
-    const float beta = 0.0f;
+    hipError_t err;
+    int devices, failed = 0;
+    
+    if ((err = hipGetDeviceCount(&devices)) != hipSuccess)
+    {
+        std::cerr << "Couldn't find any HIP devices: " << hipGetErrorString(err) << std::endl;
+        return -1;
+    }
+    
+    for (int i = 0; i < devices; i++)
+    {
+        if ((err = hipSetDevice(i)) != hipSuccess)
+        {
+            std::cerr << "Couldn't set GPU" << i << ": " << hipGetErrorString(err) << std::endl;
+            failed++;
+            continue;
+        }
+    }
+    
+    hipMalloc(&d_input, n * c * h * w * sizeof(*d_input));
+    hipMalloc(&d_output, n * k * (h - kh + 1) * (w - kw + 1) * sizeof(*d_output));
+    hipMalloc(&d_kernel, k * c * kh * kw * sizeof(*d_kernel));
+
+    hipMemcpy(d_input, input_data, n * c * h * w * sizeof(*input_data), hipMemcpyHostToDevice);
+    hipMemcpy(d_kernel, kernel_data, k * c * kh * kw * sizeof(*kernel_data), hipMemcpyHostToDevice);
     
     miopenCreate(&handle);
     
@@ -71,17 +89,16 @@ int main(void)
     
     miopenConvolutionForwardGetWorkSpaceSize(handle, filter_desc, input_desc, conv_desc, output_desc, &workspace_size);
     
-    _ = hipMalloc(&d_workspace, workspace_size);
+    hipMalloc(&d_workspace, workspace_size);
 
     miopenFindConvolutionForwardAlgorithm(handle, input_desc, d_input, filter_desc, d_kernel, conv_desc, output_desc, d_output, 1, &ret_algo_count, &perf_results, d_workspace, workspace_size, false);
     
     miopenConvolutionForward(handle, &alpha, input_desc, d_input, filter_desc, d_kernel, conv_desc, perf_results.fwd_algo, &beta, output_desc, d_output, d_workspace, workspace_size);
 
-    // Copy output back to host
+    // Copy output back to host and print
     float output_data[n * k * (h - kh + 1) * (w - kw + 1)];
-    _ = hipMemcpy(output_data, d_output, n * k * (h - kh + 1) * (w - kw + 1) * sizeof(*d_output), hipMemcpyDeviceToHost);
-
-    // Print output
+    hipMemcpy(output_data, d_output, n * k * (h - kh + 1) * (w - kw + 1) * sizeof(*d_output), hipMemcpyDeviceToHost);
+    
     for (int i = 0; i < n * k * (h - kh + 1) * (w - kw + 1); i++)
     {
         std::cout << output_data[i] << " ";
@@ -92,16 +109,15 @@ int main(void)
         }
     }
 
-    // Clean up
     miopenDestroyTensorDescriptor(input_desc);
     miopenDestroyTensorDescriptor(output_desc);
     miopenDestroyTensorDescriptor(filter_desc);
     miopenDestroyConvolutionDescriptor(conv_desc);
     miopenDestroy(handle);
-    _ = hipFree(d_input);
-    _ = hipFree(d_output);
-    _ = hipFree(d_kernel);
-    _ = hipFree(d_workspace);
+    hipFree(d_input);
+    hipFree(d_output);
+    hipFree(d_kernel);
+    hipFree(d_workspace);
 
-    return 0;
+    return failed;
 }
