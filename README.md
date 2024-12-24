@@ -88,7 +88,7 @@ This distribution tends to have the latest and greatest of just about everything
  - PyTorch 2.2.2 is recommended for security reasons as older ones contain a critical vulnerability that could lead to remote code execution.
  - ROCm 5.3.3 and earlier are NOT build-compatible with PyTorch 2. You'll need PyTorch 1.13.1, or use hacky workarounds.
  - It is possible to build PyTorch 2.3.x against ROCm < 5.7 for RDNA1, but the process is broken after integrating AOTriton. Consider avoiding this.
- - hipBLASLt is created as a dummy library, as it's not yet supported on this architecture while permitting linkage to machine learning frameworks.
+ - hipBLASLt is created as a dummy library, as it's not yet supported on this architecture while permitting linkage to PyTorch.
  - This PyTorch cannot use flash or memory-efficient attention because Triton does not implement support for that architecture class.
  - ONNX Runtime 1.17 needs ROCm >= 5.6, and ONNX Runtime 1.20 depends on ROCm >= 6.0 for a successful build.
  - These libraries are built without testing enabled. Copy the verification directory to the container to confirm their basic functionality.
