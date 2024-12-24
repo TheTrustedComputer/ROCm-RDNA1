@@ -91,7 +91,7 @@ This distribution tends to have the latest and greatest of just about everything
  - hipBLASLt is created as a dummy library, as it's not yet supported on this architecture while permitting linkage to machine learning frameworks.
  - This PyTorch cannot use flash or memory-efficient attention because Triton does not implement support for that architecture class.
  - ONNX Runtime 1.17 needs ROCm >= 5.6, and ONNX Runtime 1.20 depends on ROCm >= 6.0 for a successful build.
- - These libraries are built without testing enabled. Navigate the verification directory to confirm their basic functionality.
+ - These libraries are built without testing enabled. Copy the verification directory to the container to confirm their basic functionality.
  - The default CMake build type is set to `Release` and has `-march=native -O3 -s -w` appended to the compiler flags.
  - Composable kernels won't compile out of the box but will when patched to include them (extremely slow and highly experimental).
 
