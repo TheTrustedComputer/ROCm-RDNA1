@@ -77,7 +77,7 @@ Recommended for the most stable and efficient production environment. It's not n
 
 ### Ubuntu 24.04: ROCm 6.3.1 + PyTorch 2.5.1 + ONNX Runtime 1.20.1
 
-Provides newer software and libraries when performance isn't a priority. Choose this if you have conflicting dependencies or erratic program behavior on Debian 12.
+Provides newer software and libraries when performance isn't a priority. Choose this if you have conflicting dependencies or erratic program behavior on the Debian 12 config.
 
 ### Arch Linux: Latest ROCm + PyTorch + ONNX Runtime
 
