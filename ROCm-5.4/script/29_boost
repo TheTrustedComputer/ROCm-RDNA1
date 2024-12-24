@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+set -e
+
+pushd $ROCM_WORKING_DIR/boost > /dev/null
+./bootstrap.sh
+./b2 install cflags="-march=native -O3 -s -w -fPIC" cxxflags="-march=native -O3 -s -w -fPIC" link=static --prefix=$HOME/.boost --with-system --with-filesystem
+popd > /dev/null

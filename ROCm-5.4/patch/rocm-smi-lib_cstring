@@ -1,0 +1,10 @@
+--- a/rocm_smi_lib/src/rocm_smi_gpu_metrics.cc
++++ b/rocm_smi_lib/src/rocm_smi_gpu_metrics.cc
+@@ -53,6 +53,7 @@
+ #include <regex>  // NOLINT
+ #include <vector>
+ #include <pthread.h>
++#include <cstring>
+ 
+ #include "rocm_smi/rocm_smi_common.h"  // Should go before rocm_smi.h
+ #include "rocm_smi/rocm_smi_main.h"

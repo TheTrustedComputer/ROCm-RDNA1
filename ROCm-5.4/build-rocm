@@ -1,0 +1,31 @@
+#! /usr/bin/env bash
+
+export PATH=$ROCM_INSTALL_DIR/bin:$ROCM_INSTALL_DIR/hip/bin:$ROCM_INSTALL_DIR/llvm/bin:$HOME/.protobuf/bin:$PATH
+
+pushd $ROCM_SOURCE_DIR > /dev/null
+git apply $ROCM_WORKING_DIR/patch/hip_voidcast
+git apply $ROCM_WORKING_DIR/patch/miopen_composable-kernel_gfx101x
+git apply $ROCM_WORKING_DIR/patch/migraphx_gfx101x
+git apply $ROCM_WORKING_DIR/patch/rccl_buffer-wbinvl1-vol_gfx101x
+git apply $ROCM_WORKING_DIR/patch/rocrand_gfx101x
+git apply $ROCM_WORKING_DIR/patch/rocblas_python3
+git apply $ROCM_WORKING_DIR/patch/rocm-smi-lib_cstring
+git apply $ROCM_WORKING_DIR/patch/roctracer_voidcast
+popd > /dev/null
+
+set -e
+
+start_time=$(date +%s)
+
+pushd $ROCM_WORKING_DIR/script > /dev/null
+for file in *
+do
+    bash $file
+    ldconfig
+done
+popd > /dev/null
+
+build_time=$(($(date +%s) - $start_time))
+echo -ne "\nTook $build_time second" && [ $build_time -ne 1 ] && echo "s" || echo "."
+
+rm -rf $ROCM_BUILD_DIR

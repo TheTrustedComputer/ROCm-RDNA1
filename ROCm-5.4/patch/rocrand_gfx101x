@@ -1,0 +1,14 @@
+--- a/rocRAND/library/include/rocrand/rocrand_common.h
++++ b/rocRAND/library/include/rocrand/rocrand_common.h
+@@ -64,7 +64,10 @@ namespace detail {
+       defined(__gfx906__) || \
+       defined(__gfx908__) || \
+       defined(__gfx909__) || \
+-      defined(__gfx1030__) )
++      defined(__gfx1030__) || \
++      defined(__gfx1010__) || \
++      defined(__gfx1011__) || \
++      defined(__gfx1012__) )
+   #if !defined(ROCRAND_ENABLE_INLINE_ASM)
+     #define ROCRAND_ENABLE_INLINE_ASM
+   #endif

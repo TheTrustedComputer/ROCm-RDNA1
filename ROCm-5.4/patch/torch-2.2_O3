@@ -1,0 +1,11 @@
+--- a/Torch/CMakeLists.txt
++++ b/Torch/CMakeLists.txt
+@@ -835,7 +835,7 @@ endif()
+ # Re-include to override append_cxx_flag_if_supported from third_party/FBGEMM
+ include(cmake/public/utils.cmake)
+ if(NOT MSVC)
+-  string(APPEND CMAKE_CXX_FLAGS " -O2 -fPIC")
++  string(APPEND CMAKE_CXX_FLAGS " -O3 -fPIC")
+   # Eigen fails to build with some versions, so convert this to a warning
+   # Details at http://eigen.tuxfamily.org/bz/show_bug.cgi?id=1459
+   string(APPEND CMAKE_CXX_FLAGS " -Wall")

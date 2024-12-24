@@ -1,0 +1,32 @@
+#! /usr/bin/env bash
+
+set -e
+
+mkdir -p $ROCM_BUILD_DIR/hip
+pushd $ROCM_BUILD_DIR/hip > /dev/null
+
+cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DHIP_COMMON_DIR=$ROCM_SOURCE_DIR/HIP \
+    -DHIPCC_BIN_DIR=$ROCM_INSTALL_DIR/hip/bin \
+    -DPROF_API_HEADER_PATH=$ROCM_WORKING_DIR \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/hipamd
+
+cmake --build .
+cmake --install . --prefix $ROCM_INSTALL_DIR
+popd > /dev/null
+
+pushd $ROCM_INSTALL_DIR/bin > /dev/null
+rm -r *.bin
+mv ../hip/bin/*.bin .
+popd > /dev/null
+
+pushd $ROCM_INSTALL_DIR/hip/bin > /dev/null
+ln -s ../../bin/hipcc.bin hipcc.bin
+ln -s ../../bin/hipconfig.bin hipconfig.bin
+popd > /dev/null

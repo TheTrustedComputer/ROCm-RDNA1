@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/comgr \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_PREFIX_PATH=$ROCM_INSTALL_DIR/llvm/lib/cmake \
+    -DBUILD_TESTING=OFF \
+    -DROCM_CCACHE_BUILD=ON \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/ROCm-CompilerSupport/lib/comgr
+
+cmake --build $ROCM_BUILD_DIR/comgr
+cmake --install $ROCM_BUILD_DIR/comgr --prefix $ROCM_INSTALL_DIR

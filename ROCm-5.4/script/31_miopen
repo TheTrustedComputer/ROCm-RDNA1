@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/miopen \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_PREFIX_PATH="$ROCM_WORKING_DIR/.boost" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DBUILD_TESTING=OFF \
+    -DMIOPEN_USE_COMPOSABLEKERNEL=OFF \
+    -DMIOPEN_USE_MLIR=ON \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/MIOpen
+
+cmake --build $ROCM_BUILD_DIR/miopen
+cmake --install $ROCM_BUILD_DIR/miopen --prefix $ROCM_INSTALL_DIR

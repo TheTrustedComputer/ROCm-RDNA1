@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocm-core \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w" \
+    -DPROJECT_VERSION_MAJOR="$ROCM_MAJOR_VERSION" \
+    -DPROJECT_VERSION_MINOR="$ROCM_MINOR_VERSION" \
+    -DPROJECT_VERSION_PATCH="$ROCM_PATCH_VERSION" \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocm-core
+
+cmake --build $ROCM_BUILD_DIR/rocm-core
+cmake --install $ROCM_BUILD_DIR/rocm-core --prefix $ROCM_INSTALL_DIR

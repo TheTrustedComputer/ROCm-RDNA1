@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hipsparse \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/bin/hipcc \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w" \
+    -DCMAKE_Fortran_FLAGS="-march=native -O3 -s -w" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DBUILD_CLIENTS_TESTS=OFF \
+    -DBUILD_CLIENTS_SAMPLES=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/hipSPARSE
+
+cmake --build $ROCM_BUILD_DIR/hipsparse
+cmake --install $ROCM_BUILD_DIR/hipsparse --prefix $ROCM_INSTALL_DIR

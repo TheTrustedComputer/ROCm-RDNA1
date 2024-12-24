@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocmlir \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DBUILD_MIXR_TARGET=ON \
+    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-pc-linux-gnu" \
+    -DLLVM_CCACHE_BUILD=ON \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocMLIR
+
+cmake --build $ROCM_BUILD_DIR/rocmlir
+cmake --install $ROCM_BUILD_DIR/rocmlir --prefix $ROCM_INSTALL_DIR

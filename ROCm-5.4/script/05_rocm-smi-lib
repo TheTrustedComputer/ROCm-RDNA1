@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocm-smi-lib \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocm_smi_lib
+
+cmake --build $ROCM_BUILD_DIR/rocm-smi-lib
+cmake --install $ROCM_BUILD_DIR/rocm-smi-lib --prefix $ROCM_INSTALL_DIR

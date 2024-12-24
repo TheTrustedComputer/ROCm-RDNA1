@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/protobuf \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+    -Dprotobuf_BUILD_TESTS=OFF \
+    -G Ninja \
+    $ROCM_WORKING_DIR/protobuf
+
+cmake --build $ROCM_BUILD_DIR/protobuf
+cmake --install $ROCM_BUILD_DIR/protobuf --prefix $HOME/.protobuf

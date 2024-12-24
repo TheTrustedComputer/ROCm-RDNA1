@@ -1,0 +1,41 @@
+#! /usr/bin/env bash
+
+set -e
+
+pushd $ROCM_WORKING_DIR/magma > /dev/null
+
+## Replace semicolon separated targets with spaces
+TARGETS=`echo $AMDGPU_TARGETS | tr ";" " "`
+
+## Use the example build against AMD HIP, GCC, and OpenBLAS
+cp make.inc-examples/make.inc.hip-gcc-openblas make.inc
+
+## Don't include OpenMP; according to AMD, hipcc may cause isnan() on __device__ to not be found
+sed -i "s/^FOPENMP/#FOPENMP/g" make.inc
+
+## Only build against the target architecture
+sed -i "s/gfx900 gfx906 gfx908/$TARGETS/g" make.inc
+
+## Replace OpenBLAS with FLAME and BLIS (finetuned for AMD systems)
+sed -i "s/-lopenblas/-lflame -lblis/g" make.inc
+
+## Do not check OpenBLAS installation
+sed -i "s/-include make.check-openblas//g" make.inc
+
+## Add ROCm library path
+echo "LIB += -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_INSTALL_DIR/lib -Wl,--rpath,$ROCM_INSTALL_DIR/magma/lib" >> make.inc
+echo "INC += -march=native -O3 -s -w" >> make.inc
+
+## Skip Fortran compilation
+sed -i "s/gfortran//g" make.inc
+
+BACKEND=hip GPU_TARGET="$TARGETS" make -f make.gen.hipMAGMA -j `nproc`
+make lib/libmagma.so -j `nproc`
+
+popd > /dev/null
+
+mkdir $ROCM_INSTALL_DIR/magma
+cp -r $ROCM_WORKING_DIR/magma/lib $ROCM_WORKING_DIR/magma/include $ROCM_INSTALL_DIR/magma
+mv -f $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc.in $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc
+sed -i "s/0.0.0/2.6.2/g" $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc
+rm -f $ROCM_INSTALL_DIR/magma/include/Makefile*

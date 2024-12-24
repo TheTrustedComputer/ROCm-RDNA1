@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocrand \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/bin/hipcc \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DHIP_ROOT_DIR="$ROCM_INSTALL_DIR" \
+    -DBUILD_TEST=OFF \
+    -DBUILD_BENCHMARK=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocRAND
+
+cmake --build $ROCM_BUILD_DIR/rocrand
+cmake --install $ROCM_BUILD_DIR/rocrand --prefix $ROCM_INSTALL_DIR

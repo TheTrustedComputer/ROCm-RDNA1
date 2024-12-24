@@ -1,0 +1,83 @@
+services:
+    rocm_build:
+        image: rdna1-rocm54:rocm-build
+        container_name: RDNA1_ROCm54_Build_Phase
+        entrypoint: ["bash", "build-rocm"]
+        build:
+            context: .
+            dockerfile: dockerfile-rocm
+            args:
+                ROCM_WORKING_DIR: $ROCM_WORKING_DIR
+                ROCM_INSTALL_DIR: $ROCM_INSTALL_DIR
+        devices:
+            - /dev/dri:/dev/dri
+            - /dev/kfd:/dev/kfd
+        environment:
+            - AMDGPU_TARGETS=$AMDGPU_TARGETS
+            - ROCM_MAJOR_VERSION=$ROCM_MAJOR_VERSION
+            - ROCM_MINOR_VERSION=$ROCM_MINOR_VERSION
+            - ROCM_PATCH_VERSION=$ROCM_PATCH_VERSION
+            - ROCM_VERSION=$ROCM_MAJOR_VERSION.$ROCM_MINOR_VERSION.$ROCM_PATCH_VERSION
+            - ROCM_WORKING_DIR=$ROCM_WORKING_DIR
+            - ROCM_SOURCE_DIR=$ROCM_SOURCE_DIR
+            - ROCM_BUILD_DIR=$ROCM_BUILD_DIR
+            - ROCM_INSTALL_DIR=$ROCM_INSTALL_DIR
+            - ROCM_PATH=$ROCM_INSTALL_DIR
+            - LIBRARY_PATH=$LIBRARY_PATH
+        working_dir: $ROCM_WORKING_DIR
+        network_mode: default
+    torchonnx_build:
+        image: rdna1-rocm54:torchonnx-build
+        container_name: RDNA1_ROCm54_TorchONNX_Build_Phase
+        entrypoint: ["bash", "build-torchonnx"]
+        build:
+            context: .
+            dockerfile: dockerfile-torchonnx
+            args:
+                ROCM_WORKING_DIR: $ROCM_WORKING_DIR
+                ROCM_INSTALL_DIR: $ROCM_INSTALL_DIR
+        devices:
+            - /dev/dri:/dev/dri
+            - /dev/kfd:/dev/kfd
+        environment:
+            - AMDGPU_TARGETS=$AMDGPU_TARGETS
+            - PYTORCH_ROCM_ARCH=$AMDGPU_TARGETS
+            - ROCM_WORKING_DIR=$ROCM_WORKING_DIR
+            - ROCM_INSTALL_DIR=$ROCM_INSTALL_DIR
+            - ROCM_PATH=$ROCM_INSTALL_DIR
+            - LDFLAGS=-Wl,-rpath,$ROCM_INSTALL_DIR/lib
+            - CMAKE_PREFIX_PATH=$ROCM_INSTALL_DIR
+            - CMAKE_C_FLAGS=$CMAKE_C_FLAGS
+            - CMAKE_CXX_FLAGS=$CMAKE_C_FLAGS
+        working_dir: $ROCM_WORKING_DIR
+        network_mode: default
+        stdin_open: true
+        tty: true
+    runtime:
+        image: rdna1-rocm54:runtime
+        container_name: RDNA1_ROCm54_Runtime
+        build:
+            context: .
+            dockerfile: dockerfile-runtime
+            args:
+                ROCM_WORKING_DIR: $ROCM_WORKING_DIR
+                ROCM_INSTALL_DIR: $ROCM_INSTALL_DIR
+                HOME_USER: $HOME_USER
+        devices:
+            - /dev/dri:/dev/dri
+            - /dev/kfd:/dev/kfd
+        environment:
+            - DISPLAY=$DISPLAY
+            - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
+            - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
+            - MIOPEN_FIND_MODE=normal
+            - MIOPEN_FIND_ENFORCE=search
+        volumes:
+            - $SOFTWARE_DIR:/home/$HOME_USER/Software
+            - /dev/shm:/dev/shm
+            - /tmp/.X11-unix:/tmp/.X11-unix
+            - $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR
+        working_dir: /home/$HOME_USER
+        network_mode: host
+        stdin_open: true
+        tty: true

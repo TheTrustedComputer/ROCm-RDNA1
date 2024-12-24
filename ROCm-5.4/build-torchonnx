@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+pushd $ROCM_WORKING_DIR > /dev/null
+git apply patch/torch-2.2_O3
+git apply patch/torch-2.2_numpy-2
+git apply patch/onnxrt-1.16_rocm-version
+popd > /dev/null
+
+set -e
+
+start_time=$(date +%s)
+
+pushd $ROCM_WORKING_DIR/script > /dev/null
+for file in *
+do
+    bash $file
+done
+popd > /dev/null
+
+build_time=$(($(date +%s) - $start_time))
+echo -ne "\nTook $build_time second" && [ $build_time -ne 1 ] && echo "s" || echo "."

@@ -1,0 +1,165 @@
+--- a/MIOpen/src/include/miopen/solver/ck_utility_common.hpp
++++ b/MIOpen/src/include/miopen/solver/ck_utility_common.hpp
+@@ -53,6 +53,9 @@ static inline bool is_ck_supported_hardware(const Handle& handle)
+            StartsWith(handle.GetDeviceName(), "gfx906") ||
+            StartsWith(handle.GetDeviceName(), "gfx908") ||
+            StartsWith(handle.GetDeviceName(), "gfx90a") ||
++           StartsWith(handle.GetDeviceName(), "gfx1010") ||
++           StartsWith(handle.GetDeviceName(), "gfx1011") ||
++           StartsWith(handle.GetDeviceName(), "gfx1012") ||
+            StartsWith(handle.GetDeviceName(), "gfx1031") ||
+            StartsWith(handle.GetDeviceName(), "gfx1030");
+ }
+@@ -82,6 +85,12 @@ static inline auto get_ck_common_compiler_flag(const Handle& handle)
+         compiler_flag << " -DCK_AMD_GPU_GFX908";
+     else if(StartsWith(device_name, "gfx90a"))
+         compiler_flag << " -DCK_AMD_GPU_GFX90A";
++    else if(StartsWith(device_name, "gfx1010"))
++        compiler_flag << " -DCK_AMD_GPU_GFX1010";
++    else if(StartsWith(device_name, "gfx1011"))
++        compiler_flag << " -DCK_AMD_GPU_GFX1011";
++    else if(StartsWith(device_name, "gfx1012"))
++        compiler_flag << " -DCK_AMD_GPU_GFX1012";
+     else if(StartsWith(device_name, "gfx1030"))
+         compiler_flag << " -DCK_AMD_GPU_GFX1030";
+     else if(StartsWith(device_name, "gfx1031"))
+--- a/MIOpen/src/composable_kernel/composable_kernel/include/utility/config.hpp
++++ b/MIOpen/src/composable_kernel/composable_kernel/include/utility/config.hpp
+@@ -14,7 +14,7 @@
+ // should enable one and only one GPU target
+ #if !(defined(CK_AMD_GPU_GFX803) || defined(CK_AMD_GPU_GFX900) || defined(CK_AMD_GPU_GFX906) ||  \
+       defined(CK_AMD_GPU_GFX908) || defined(CK_AMD_GPU_GFX90A) || defined(CK_AMD_GPU_GFX1030) || \
+-      defined(CK_AMD_GPU_GFX1031))
++      defined(CK_AMD_GPU_GFX1031) || defined(CK_AMD_GPU_GFX1010) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012))
+ #error Need to define (only) one GPU target
+ #endif
+ 
+@@ -30,20 +30,24 @@
+ #if defined(CK_AMD_GPU_GFX803) || defined(CK_AMD_GPU_GFX900) || defined(CK_AMD_GPU_GFX906) || \
+     defined(CK_AMD_GPU_GFX908) || defined(CK_AMD_GPU_GFX90A)
+ #define CK_BUFFER_RESOURCE_3RD_DWORD 0x00020000
+-#elif defined(CK_AMD_GPU_GFX1030) || defined(CK_AMD_GPU_GFX1031)
++#elif defined(CK_AMD_GPU_GFX1030) || defined(CK_AMD_GPU_GFX1031) || defined(CK_AMD_GPU_GFX1010) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012)
+ #define CK_BUFFER_RESOURCE_3RD_DWORD 0x31014000
+ #endif
+ 
+ // FMA instruction
+-#if defined(CK_AMD_GPU_GFX803) || defined(CK_AMD_GPU_GFX900)
++#if defined(CK_AMD_GPU_GFX803) || defined(CK_AMD_GPU_GFX900) || defined(CK_AMD_GPU_GFX1010) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012)
+ #define CK_USE_AMD_V_MAC_F32
+ #elif defined(CK_AMD_GPU_GFX906) || defined(CK_AMD_GPU_GFX908) || defined(CK_AMD_GPU_GFX90a) || \
+-    defined(CK_AMD_GPU_GFX1030) || defined(CK_AMD_GPU_GFX1031)
++    defined(CK_AMD_GPU_GFX1030) || defined(CK_AMD_GPU_GFX1031) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012)
+ #define CK_USE_AMD_V_FMAC_F32
+ #define CK_USE_AMD_V_DOT2_F32_F16
+ #define CK_USE_AMD_V_DOT4_I32_I8
+ #endif
+ 
++#ifdef CK_AMD_GPU_GFX1010
++#define CK_USE_AMD_V_FMAC_F32
++#endif
++
+ // multi index
+ #define CK_USE_DYNAMICALLY_INDEXED_MULTI_INDEX 0
+ 
+--- a/MIOpen/src/include/miopen/solver/implicitgemm_util.hpp
++++ b/MIOpen/src/include/miopen/solver/implicitgemm_util.hpp
+@@ -472,7 +472,7 @@ static inline bool is_use_amd_buffer_load_store(const ConvolutionContext& ctx)
+ {
+ #if WORKAROUND_MIOPEN_ISSUE_557
+     const auto device_name = ctx.GetStream().GetDeviceName();
+-    return !StartsWith(device_name, "gfx103");
++    return !(StartsWith(device_name, "gfx103") || StartsWith(device_name, "gfx101"));
+ #else
+     return true;
+ #endif
+@@ -481,7 +481,7 @@ static inline bool is_use_amd_buffer_load_store(const ConvolutionContext& ctx)
+ static inline bool is_use_v_fmac_f32(const ConvolutionContext& ctx)
+ {
+     const auto device_name = ctx.GetStream().GetDeviceName();
+-    return StartsWith(device_name, "gfx103");
++    return StartsWith(device_name, "gfx103") || StartsWith(device_name, "gfx101");
+ }
+ 
+ static inline bool support_amd_buffer_atomic_fadd(const std::string& device_name)
+@@ -602,6 +602,7 @@ static inline bool IsComposableKernelSupportedHardware(const ConvolutionContext&
+            StartsWith(c.GetStream().GetDeviceName(), "gfx906") ||
+            StartsWith(c.GetStream().GetDeviceName(), "gfx908") ||
+            StartsWith(c.GetStream().GetDeviceName(), "gfx90a") ||
++           StartsWith(c.GetStream().GetDeviceName(), "gfx101") ||
+            StartsWith(c.GetStream().GetDeviceName(), "gfx103");
+ }
+ 
+--- a/MIOpen/src/kernels/MIOpenBatchNormBwdSpatial.cl
++++ b/MIOpen/src/kernels/MIOpenBatchNormBwdSpatial.cl
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #define MIOPEN_USE_AMDGCN 0
+-#if defined(__AMDGCN__) && !MIO_BN_GFX103X
++#if defined(__AMDGCN__) && !(MIO_BN_GFX103X || MIO_BN_GFX101X)
+ #undef MIOPEN_USE_AMDGCN
+ #define MIOPEN_USE_AMDGCN 1
+ #endif
+--- a/MIOpen/src/kernels/MIOpenBatchNormFwdTrainSpatial.cl
++++ b/MIOpen/src/kernels/MIOpenBatchNormFwdTrainSpatial.cl
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #define MIOPEN_USE_AMDGCN 0
+-#if defined(__AMDGCN__) && !MIO_BN_GFX103X
++#if defined(__AMDGCN__) && !(MIO_BN_GFX103X || MIO_BN_GFX101X)
+ #undef MIOPEN_USE_AMDGCN
+ #define MIOPEN_USE_AMDGCN 1
+ #endif
+--- a/MIOpen/src/kernels/batchnorm_functions.h
++++ b/MIOpen/src/kernels/batchnorm_functions.h
+@@ -132,7 +132,7 @@
+ // TODO: Spaghetti code!!!
+ // MIOPEN_USE_AMDGCN may be defined before this header.
+ #ifndef MIOPEN_USE_AMDGCN
+-#if defined(__AMDGCN__) && !(defined(MIO_BN_GFX103X) && MIO_BN_GFX103X)
++#if defined(__AMDGCN__) && !((defined(MIO_BN_GFX103X) && MIO_BN_GFX103X) || (defined(MIO_BN_GFX101X) && MIO_BN_GFX101X))
+ #define MIOPEN_USE_AMDGCN 1
+ #else
+ #define MIOPEN_USE_AMDGCN 0
+--- a/MIOpen/src/solver/batchnorm/backward_spatial_single.cpp
++++ b/MIOpen/src/solver/batchnorm/backward_spatial_single.cpp
+@@ -258,6 +258,7 @@ BnBwdTrainingSpatialSingle::GetSolution(const ExecutionContext& context,
+             kernel.kernel_name = "MIOpenBatchNormBwdSpatial";
+ 
+             build_params << KernelBuildParameters{
++                {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+                 {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             };
+ 
+--- a/MIOpen/src/solver/batchnorm/backward_spatial_multiple.cpp
++++ b/MIOpen/src/solver/batchnorm/backward_spatial_multiple.cpp
+@@ -221,6 +221,7 @@ ConvSolution BnBwdTrainingSpatialMultiple::GetSolution(
+             {"MIO_BN_GRP0", xlocalsize},
+             {"MIO_BN_GRP1", ylocalsize},
+             {"MIO_BN_GRP2", zlocalsize},
++            {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+             {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             {"MIO_LAYOUT_NHWC", static_cast<int>(problem.IsLayoutNHWC())},
+         };
+--- a/MIOpen/src/solver/batchnorm/forward_spatial_single.cpp
++++ b/MIOpen/src/solver/batchnorm/forward_spatial_single.cpp
+@@ -211,6 +211,7 @@ BnFwdTrainingSpatialSingle::GetSolution(const ExecutionContext& context,
+             {"MIO_BN_GRP0", xlocalsize},
+             {"MIO_BN_GRP1", ylocalsize},
+             {"MIO_BN_GRP2", zlocalsize},
++            {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+             {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             {"MIO_LAYOUT_NHWC", static_cast<int>(problem.IsLayoutNHWC())},
+         };
+--- a/MIOpen/src/solver/batchnorm/forward_spatial_multiple.cpp
++++ b/MIOpen/src/solver/batchnorm/forward_spatial_multiple.cpp
+@@ -177,6 +177,7 @@ ConvSolution BnFwdTrainingSpatialMultiple::GetSolution(
+             {"MIO_BN_GRP0", xlocalsize},
+             {"MIO_BN_GRP1", ylocalsize},
+             {"MIO_BN_GRP2", zlocalsize},
++            {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+             {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             {"MIO_LAYOUT_NHWC", static_cast<int>(problem.IsLayoutNHWC())},
+         };

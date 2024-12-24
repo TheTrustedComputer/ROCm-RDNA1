@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hipsolver \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/bin/hipcc \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_Fortran_FLAGS="-march=native -O3 -s -w" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DBUILD_CLIENTS_TESTS=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/hipSOLVER
+
+cmake --build $ROCM_BUILD_DIR/hipsolver
+cmake --install $ROCM_BUILD_DIR/hipsolver --prefix $ROCM_INSTALL_DIR

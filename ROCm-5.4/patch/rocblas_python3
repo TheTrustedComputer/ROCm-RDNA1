@@ -1,0 +1,10 @@
+--- a/rocBLAS/cmake/virtualenv.cmake
++++ b/rocBLAS/cmake/virtualenv.cmake
+@@ -1,6 +1,6 @@
+ # find_package(PythonInterp)
+ # # TODO: Check PYTHON_VERSION_MAJOR
+-
++set(python python3)
+ find_program(VIRTUALENV_PYTHON_EXE ${python})
+ if(NOT VIRTUALENV_PYTHON_EXE)
+     # look for non default name

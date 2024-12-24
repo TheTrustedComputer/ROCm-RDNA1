@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/blaze \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DBLAZE_SMP_THREADS=C++11 \
+    -G Ninja \
+    $ROCM_WORKING_DIR/blaze
+
+cmake --build $ROCM_BUILD_DIR/blaze
+cmake --install $ROCM_BUILD_DIR/blaze --prefix $HOME/.blaze
