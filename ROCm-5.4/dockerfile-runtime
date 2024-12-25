@@ -31,7 +31,6 @@ RUN apt-get update; \
                                  pipewire-pulse pipewire-alsa \
                                  libportaudio2 \
                                  weston \
-                                 fonts-noto \
                                  libglu1-mesa \
                                  gobject-introspection \
                                  procps; \
