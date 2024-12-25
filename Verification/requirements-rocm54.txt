@@ -1,0 +1,4 @@
+py-cpuinfo
+onnx==1.14
+file:../torch-2.2.0a0+git39901f2-cp311-cp311-linux_x86_64.whl
+file:../onnxruntime_training-1.16.3+cpu-cp311-cp311-linux_x86_64.whl

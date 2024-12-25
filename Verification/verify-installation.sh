@@ -14,12 +14,12 @@ mkdir -p build
 
 # GPU0: Success
 echo -e "\nVerifying HIP..."
-hipcc -O3 -w -march=native verify_hip.cpp -o build/verify_hip
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_hip.cpp -o build/verify_hip
 build/verify_hip
 
 # GPU0: 0.637206 0.499381 0.4742 0.584807 0.120109 0.260578 0.928544 0.471172 0.362893 0.412708 
 echo -e "\nVerifying rocRAND..."
-hipcc -O3 -w -march=native verify_rocrand.cpp -o build/verify_rocrand -lrocrand
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_rocrand.cpp -o build/verify_rocrand -lrocrand
 build/verify_rocrand
 
 # Matrix A
@@ -40,7 +40,7 @@ build/verify_rocrand
 # [ 400 358 316 274 ]
 # [ 560 502 444 386 ]
 echo -e "\nVerifying rocBLAS..."
-hipcc -O3 -w -march=native verify_rocblas.cpp -o build/verify_rocblas -lrocblas
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_rocblas.cpp -o build/verify_rocblas -lrocblas
 build/verify_rocblas
 
 # Sparse Matrix A
@@ -52,7 +52,7 @@ build/verify_rocblas
 # Vector X [ 1 2 3 4 ]
 # Vector Y on GPU0 [ 7 19 28 46 ]
 echo -e "\nVerifying rocSPARSE..."
-hipcc -O3 -w -march=native verify_rocsparse.cpp -o build/verify_rocsparse -lrocsparse
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_rocsparse.cpp -o build/verify_rocsparse -lrocsparse
 build/verify_rocsparse
 
 # Matrix A
@@ -64,7 +64,7 @@ build/verify_rocsparse
 # Pivot Vector [ -50 -60 -70 -80 ]
 # Solution Vector on GPU0 [ -1.09091 14.8182 2.86364 -15.2273 ]
 echo -e "\nVerifying rocSOLVER..."
-hipcc -O3 -w -march=native verify_rocsolver.cpp -o build/verify_rocsolver -lrocblas -lrocsolver
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_rocsolver.cpp -o build/verify_rocsolver -lrocblas -lrocsolver
 build/verify_rocsolver
 
 # FFT of sine wave at 120 Hz on GPU0
@@ -94,14 +94,14 @@ build/verify_rocsolver
 # 230 Hz: 0.104707
 # 240 Hz: 0.0654588
 echo -e "\nVerifying rocFFT..."
-hipcc -O3 -w -march=native verify_rocfft.cpp -o build/verify_rocfft -lrocfft
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_rocfft.cpp -o build/verify_rocfft -lrocfft
 build/verify_rocfft
 
 # -6 -6 -6
 # -6 -6 -6
 # -6 -6 -6
 echo -e "\nVerifying MIOpen..."
-hipcc -O3 -w -march=native verify_miopen.cpp -o build/verify_miopen -lMIOpen
+hipcc -O3 -w -march=native -I/opt/rocm/include -L/opt/rocm/lib verify_miopen.cpp -o build/verify_miopen -lMIOpen
 build/verify_miopen
 
 # 250 260 270 280 
@@ -109,7 +109,7 @@ build/verify_miopen
 # 986 1028 1070 1112 
 # 1354 1412 1470 1528 
 echo -e "\nVerifying MIGraphX..."
-hipcc -O3 -w -march=native -std=c++17 verify_migraphx.cpp -o build/verify_migraphx -I/opt/rocm/lib/migraphx/include -L/opt/rocm/lib/migraphx/lib -lmigraphx -lmigraphx_gpu
+hipcc -O3 -w -march=native -std=c++17 -I/opt/rocm/include -I/opt/rocm/lib/migraphx/include -L/opt/rocm/lib -L/opt/rocm/lib/migraphx/lib verify_migraphx.cpp -o build/verify_migraphx -lmigraphx -lmigraphx_gpu
 build/verify_migraphx
 
 rm -rf build

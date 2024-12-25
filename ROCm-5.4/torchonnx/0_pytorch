@@ -13,7 +13,7 @@ source .torch-build-venv/bin/activate
 cd Torch
 pip install -r requirements.txt
 python tools/amd_build/build_amd.py
-ATEN_NO_TEST=ON BUILD_TEST=OFF USE_KINETO=OFF USE_NATIVE_ARCH=ON python setup.py bdist_wheel
+WITH_BLAS=FLAME ATEN_NO_TEST=ON BUILD_TEST=OFF USE_KINETO=OFF USE_NATIVE_ARCH=ON python setup.py bdist_wheel
 pip install dist/*.whl
 cd ../TorchAudio
 USE_ROCM=ON HIP_PATH=$ROCM_INSTALL_DIR/lib:$ROCM_INSTALL_DIR python setup.py bdist_wheel
