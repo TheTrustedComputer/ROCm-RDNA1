@@ -17,7 +17,7 @@ We're not experts in architectures, ROCm, or GPGPU computing. We're simply enthu
 ## System Requirements
 
 - A discrete RDNA1 AMD GPU
-    - RX 5500/5600/5700 XT
+    - Radeon RX 5500/5600/5700 XT
 - A decent computer running a Linux distribution
     - AMD Ryzen 3000
     - Intel Core 10th Gen
