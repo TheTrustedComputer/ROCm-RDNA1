@@ -2,7 +2,7 @@
 
 ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set. Other ROCm components aren't necessary for either of these, so they're excluded from the script to streamline the operation.
 
-In our setup, we have two 8 GB AMD Radeon RX 5500 XTs for machine learning purposes, not the standard 4 GB model. We must set the GPU target to `gfx1012` to ensure interoperability without broken workarounds with `HSA_OVERRIDE_GFX_VERSION` that may lead to unpredictable behavior from incompatible instruction sets. The 5600 XT and 5700 XT correspond to `gfx1010` respectively, so choose the matching target with your AMD GPU.
+In our setup, we have two 8 GB AMD Radeon RX 5500 XTs for machine learning purposes, not the standard 4 GB model. We must set the GPU target to `gfx1012` to ensure interoperability without broken workarounds with `HSA_OVERRIDE_GFX_VERSION` that may lead to unpredictable behavior from mismatched instruction sets. The 5600 XT and 5700 XT correspond to `gfx1010` respectively, so choose the matching target with your AMD GPU.
 
 ## Disclaimers
 
