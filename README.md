@@ -68,7 +68,8 @@ cd ROCm-RDNA1/ROCm-5.4
 You're done! Patience is key, as this may take several hours depending on your hardware. As for the other versions, replace 5.4 with another point release such as 6.3, and repeat the above lines. When the image is ready, attach the container with:
 
 ```sh
-docker attach RDNA1_ROCm54_Runtime
+docker-compose up runtime
+docker attach RDNA1_ROCm54_Runtime # do this on another session
 ```
 
 We're not kidding; it's that simple! The runtime image includes PyTorch, TorchAudio, TorchVision, and ONNX Runtime Python wheels that you can install via pip. You're all set to experiment with the world of AI. 
