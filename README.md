@@ -44,7 +44,7 @@ Arch-based distributions (Manjaro, EndeavourOS):
 sudo pacman -S docker docker-compose
 ```
 
-After installation, verify that Docker is active and your account has the privilege to run containers. You may need to enable any Docker-related services if the distribution disables it by default, as is the case with Arch.
+After installation, verify that Docker is active and your user has the privilege to run containers. You may need to enable any Docker-related services if the distribution disables it by default, as is the case with Arch.
 
 ## Build Instructions
 
