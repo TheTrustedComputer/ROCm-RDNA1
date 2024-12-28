@@ -51,8 +51,6 @@ services:
             - CMAKE_CXX_FLAGS=$CMAKE_C_FLAGS
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
-        stdin_open: true
-        tty: true
     runtime:
         image: rdna1-rocm54:runtime
         container_name: RDNA1_ROCm54_Runtime

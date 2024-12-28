@@ -21,8 +21,7 @@ RUN apt-get update; \
                                  libelf-dev \
                                  libdrm-dev \
                                  libpng-dev libjpeg62-turbo-dev \
-                                 libflame-dev \
-                                 libblis-dev; \
+                                 libflame-dev libblis-dev; \
     apt-get clean
 
 WORKDIR $ROCM_WORKING_DIR

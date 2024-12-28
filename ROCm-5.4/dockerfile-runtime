@@ -26,10 +26,8 @@ RUN apt-get update; \
                                  libdrm-amdgpu1 \
                                  file libfile-which-perl liburi-encode-perl \
                                  libfmt9 \
-                                 libflame1 \
-                                 libblis4 \
-                                 pipewire-pulse pipewire-alsa \
-                                 ffmpeg libportaudio2 \
+                                 libflame1 libblis4 \
+                                 pipewire-pulse pipewire-alsa ffmpeg libportaudio2 \
                                  weston libglu1-mesa \
                                  procps; \
     apt-get clean
