@@ -1,4 +1,4 @@
 py-cpuinfo
-onnx==1.16
+onnx<1.17
 file:../torch-2.5.0a0+gita8d6afb-cp312-cp312-linux_x86_64.whl
 file:../onnxruntime_training-1.20.1+cpu-cp312-cp312-linux_x86_64.whl
