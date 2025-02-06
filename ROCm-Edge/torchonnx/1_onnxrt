@@ -1,0 +1,29 @@
+#! /usr/bin/env bash
+
+set -e
+
+pushd $ROCM_WORKING_DIR > /dev/null
+python3 -m venv .onnx-build-venv
+source .onnx-build-venv/bin/activate
+pushd OnnxRT > /dev/null
+pip install -r requirements-dev.txt
+./build.sh --config Release \
+           --cmake_extra_defines CMAKE_C_FLAGS="-march=native -O3 -s -w" CMAKE_CXX_FLAGS="-march=native -O3 -s -w" CMAKE_HIP_ARCHITECTURES="$AMDGPU_TARGETS" onnxruntime_USE_COMPOSABLE_KERNEL=OFF \
+           --cmake_generator Ninja \
+           --build_wheel \
+           --parallel \
+           --use_rocm \
+           --rocm_home $ROCM_INSTALL_DIR \
+           --use_migraphx \
+           --migraphx_home $ROCM_INSTALL_DIR/lib/migraphx \
+           --skip_tests \
+           --skip_submodule_sync \
+           --enable_training \
+           --use_cache \
+           --compile_no_warning_as_error \
+           --allow_running_as_root
+deactivate
+popd > /dev/null
+mv -f OnnxRT/build/Linux/Release/dist/*.whl $ROCM_WORKING_DIR
+rm -rf .onnx-build-venv $ROCM_WORKING_DIR/OnnxRT/build
+popd > /dev/null

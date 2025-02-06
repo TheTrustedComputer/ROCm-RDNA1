@@ -1,0 +1,169 @@
+--- a/MIOpen/src/include/miopen/solver/ck_utility_common.hpp
++++ b/MIOpen/src/include/miopen/solver/ck_utility_common.hpp
+@@ -57,6 +57,9 @@ static inline bool is_ck_supported_hardware(const Handle& handle)
+            StartsWith(handle.GetDeviceName(), "gfx940") ||
+            StartsWith(handle.GetDeviceName(), "gfx941") ||
+            StartsWith(handle.GetDeviceName(), "gfx942") ||
++           StartsWith(handle.GetDeviceName(), "gfx1010") ||
++           StartsWith(handle.GetDeviceName(), "gfx1011") ||
++           StartsWith(handle.GetDeviceName(), "gfx1012") ||
+            StartsWith(handle.GetDeviceName(), "gfx1030") ||
+            StartsWith(handle.GetDeviceName(), "gfx1031") ||
+            StartsWith(handle.GetDeviceName(), "gfx1100") ||
+@@ -113,6 +116,12 @@ static inline auto get_ck_common_compiler_flag(const Handle& handle)
+         compiler_flag << " -DCK_AMD_GPU_GFX941";
+     else if(StartsWith(device_name, "gfx942"))
+         compiler_flag << " -DCK_AMD_GPU_GFX942";
++    else if(StartsWith(device_name, "gfx1010"))
++        compiler_flag << " -DCK_AMD_GPU_GFX1010";
++    else if(StartsWith(device_name, "gfx1011"))
++        compiler_flag << " -DCK_AMD_GPU_GFX1011";
++    else if(StartsWith(device_name, "gfx1012"))
++        compiler_flag << " -DCK_AMD_GPU_GFX1012";
+     else if(StartsWith(device_name, "gfx1030"))
+         compiler_flag << " -DCK_AMD_GPU_GFX1030";
+     else if(StartsWith(device_name, "gfx1031"))
+--- a/MIOpen/src/composable_kernel/composable_kernel/include/utility/config.hpp
++++ b/MIOpen/src/composable_kernel/composable_kernel/include/utility/config.hpp
+@@ -17,7 +17,8 @@
+       defined(CK_AMD_GPU_GFX940) || defined(CK_AMD_GPU_GFX908) || defined(CK_AMD_GPU_GFX90A) ||    \
+       defined(CK_AMD_GPU_GFX941) || defined(CK_AMD_GPU_GFX942) || defined(CK_AMD_GPU_GFX1030) ||   \
+       defined(CK_AMD_GPU_GFX1031) || defined(CK_AMD_GPU_GFX1100) || defined(CK_AMD_GPU_GFX1101) || \
+-      defined(CK_AMD_GPU_GFX1102) || defined(CK_AMD_GPU_GFX1200) || defined(CK_AMD_GPU_GFX1201))
++      defined(CK_AMD_GPU_GFX1102) || defined(CK_AMD_GPU_GFX1200) || defined(CK_AMD_GPU_GFX1201) || \
++      defined(CK_AMD_GPU_GFX1010) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012))
+ #error Need to define (only) one GPU target
+ #endif
+ 
+@@ -36,23 +37,27 @@
+ #define CK_BUFFER_RESOURCE_3RD_DWORD 0x00020000
+ #elif defined(CK_AMD_GPU_GFX1030) || defined(CK_AMD_GPU_GFX1031) || defined(CK_AMD_GPU_GFX1100) || \
+     defined(CK_AMD_GPU_GFX1101) || defined(CK_AMD_GPU_GFX1102) || defined(CK_AMD_GPU_GFX1200) ||   \
+-    defined(CK_AMD_GPU_GFX1201)
++    defined(CK_AMD_GPU_GFX1201) || defined(CK_AMD_GPU_GFX1010) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012)
+ #define CK_BUFFER_RESOURCE_3RD_DWORD 0x31014000
+ #endif
+ 
+ // FMA instruction
+-#if defined(CK_AMD_GPU_GFX803) || defined(CK_AMD_GPU_GFX900)
++#if defined(CK_AMD_GPU_GFX803) || defined(CK_AMD_GPU_GFX900) || defined(CK_AMD_GPU_GFX1010) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012)
+ #define CK_USE_AMD_V_MAC_F32
+ #elif defined(CK_AMD_GPU_GFX906) || defined(CK_AMD_GPU_GFX908) || defined(CK_AMD_GPU_GFX90a) ||  \
+     defined(CK_AMD_GPU_GFX941) || defined(CK_AMD_GPU_GFX942) || defined(CK_AMD_GPU_GFX940) ||    \
+     defined(CK_AMD_GPU_GFX1030) || defined(CK_AMD_GPU_GFX1031) || defined(CK_AMD_GPU_GFX1100) || \
+     defined(CK_AMD_GPU_GFX1101) || defined(CK_AMD_GPU_GFX1102) || defined(CK_AMD_GPU_GFX1200) || \
+-    defined(CK_AMD_GPU_GFX1201)
++    defined(CK_AMD_GPU_GFX1201) || defined(CK_AMD_GPU_GFX1011) || defined(CK_AMD_GPU_GFX1012)
+ #define CK_USE_AMD_V_FMAC_F32
+ #define CK_USE_AMD_V_DOT2_F32_F16
+ #define CK_USE_AMD_V_DOT4_I32_I8
+ #endif
+ 
++#ifdef CK_AMD_GPU_GFX1010
++#define CK_USE_AMD_V_FMAC_F32
++#endif
++
+ // multi index
+ #define CK_USE_DYNAMICALLY_INDEXED_MULTI_INDEX 0
+ 
+--- a/MIOpen/src/include/miopen/solver/implicitgemm_util.hpp
++++ b/MIOpen/src/include/miopen/solver/implicitgemm_util.hpp
+@@ -450,7 +450,7 @@ static inline bool is_use_amd_buffer_load_store(const ExecutionContext& ctx)
+ {
+ #if WORKAROUND_MIOPEN_ISSUE_557
+     const auto device_name = ctx.GetStream().GetDeviceName();
+-    return !StartsWith(device_name, "gfx103");
++    return !(StartsWith(device_name, "gfx103") || StartsWith(device_name, "gfx101"));
+ #else
+     return true;
+ #endif
+@@ -459,7 +459,7 @@ static inline bool is_use_amd_buffer_load_store(const ExecutionContext& ctx)
+ static inline bool is_use_v_fmac_f32(const ExecutionContext& ctx)
+ {
+     const auto device_name = ctx.GetStream().GetDeviceName();
+-    return StartsWith(device_name, "gfx103");
++    return StartsWith(device_name, "gfx103") || StartsWith(device_name, "gfx101");
+ }
+ 
+ static inline bool support_amd_buffer_atomic_fadd(const std::string& device_name)
+@@ -580,6 +580,7 @@ static inline bool IsComposableKernelSupportedHardware(const ExecutionContext& c
+            StartsWith(c.GetStream().GetDeviceName(), "gfx908") ||
+            StartsWith(c.GetStream().GetDeviceName(), "gfx90a") ||
+            StartsWith(c.GetStream().GetDeviceName(), "gfx94") ||
++           StartsWith(c.GetStream().GetDeviceName(), "gfx101") ||
+            StartsWith(c.GetStream().GetDeviceName(), "gfx103");
+ }
+ 
+--- a/MIOpen/src/kernels/MIOpenBatchNormBwdSpatial.cl
++++ b/MIOpen/src/kernels/MIOpenBatchNormBwdSpatial.cl
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #define MIOPEN_USE_AMDGCN 0
+-#if defined(__AMDGCN__) && !(MIO_BN_GFX103X || MIO_BN_GFX110X || MIO_BN_GFX120X)
++#if defined(__AMDGCN__) && !(MIO_BN_GFX103X || MIO_BN_GFX110X || MIO_BN_GFX120X || MIO_BN_GFX101X)
+ #undef MIOPEN_USE_AMDGCN
+ #define MIOPEN_USE_AMDGCN 1
+ #endif
+--- a/MIOpen/src/kernels/MIOpenBatchNormFwdTrainSpatial.cl
++++ b/MIOpen/src/kernels/MIOpenBatchNormFwdTrainSpatial.cl
+@@ -33,7 +33,7 @@
+ #endif
+ 
+ #define MIOPEN_USE_AMDGCN 0
+-#if defined(__AMDGCN__) && !(MIO_BN_GFX103X || MIO_BN_GFX110X || MIO_BN_GFX120X)
++#if defined(__AMDGCN__) && !(MIO_BN_GFX103X || MIO_BN_GFX110X || MIO_BN_GFX120X || MIO_BN_GFX101X)
+ #undef MIOPEN_USE_AMDGCN
+ #define MIOPEN_USE_AMDGCN 1
+ #endif
+--- a/MIOpen/src/kernels/batchnorm_functions.h
++++ b/MIOpen/src/kernels/batchnorm_functions.h
+@@ -134,7 +134,7 @@
+ #ifndef MIOPEN_USE_AMDGCN
+ #if defined(__AMDGCN__) &&                           \
+     !((defined(MIO_BN_GFX103X) && MIO_BN_GFX103X) || \
+-      (defined(MIO_BN_GFX110X) && MIO_BN_GFX110X) || (defined(MIO_BN_GFX120X) && MIO_BN_GFX120X))
++      (defined(MIO_BN_GFX110X) && MIO_BN_GFX110X) || (defined(MIO_BN_GFX120X) && MIO_BN_GFX120X) || (defined(MIO_BN_GFX101X) && MIO_BN_GFX101X))
+ #define MIOPEN_USE_AMDGCN 1
+ #else
+ #define MIOPEN_USE_AMDGCN 0
+--- a/MIOpen/src/solver/batchnorm/backward_spatial_single.cpp
++++ b/MIOpen/src/solver/batchnorm/backward_spatial_single.cpp
+@@ -259,6 +259,7 @@ BnBwdTrainingSpatialSingle::GetSolution(const ExecutionContext& context,
+             kernel.kernel_name = "MIOpenBatchNormBwdSpatial";
+ 
+             build_params << KernelBuildParameters{
++                {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+                 {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+                 {"MIO_BN_GFX110X", (StartsWith(handle.GetDeviceName(), "gfx110") ? "1" : "0")},
+                 {"MIO_BN_GFX120X", (StartsWith(handle.GetDeviceName(), "gfx120") ? "1" : "0")},
+--- a/MIOpen/src/solver/batchnorm/backward_spatial_multiple.cpp
++++ b/MIOpen/src/solver/batchnorm/backward_spatial_multiple.cpp
+@@ -224,6 +224,7 @@ ConvSolution BnBwdTrainingSpatialMultiple::GetSolution(
+             {"MIO_BN_GRP0", xlocalsize},
+             {"MIO_BN_GRP1", ylocalsize},
+             {"MIO_BN_GRP2", zlocalsize},
++            {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+             {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             {"MIO_BN_GFX110X", (StartsWith(handle.GetDeviceName(), "gfx110") ? "1" : "0")},
+             {"MIO_BN_GFX120X", (StartsWith(handle.GetDeviceName(), "gfx120") ? "1" : "0")},
+--- a/MIOpen/src/solver/batchnorm/forward_spatial_single.cpp
++++ b/MIOpen/src/solver/batchnorm/forward_spatial_single.cpp
+@@ -210,6 +210,7 @@ BnFwdTrainingSpatialSingle::GetSolution(const ExecutionContext& context,
+             {"MIO_BN_GRP0", xlocalsize},
+             {"MIO_BN_GRP1", ylocalsize},
+             {"MIO_BN_GRP2", zlocalsize},
++            {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+             {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             {"MIO_BN_GFX110X", (StartsWith(handle.GetDeviceName(), "gfx110") ? "1" : "0")},
+             {"MIO_BN_GFX120X", (StartsWith(handle.GetDeviceName(), "gfx120") ? "1" : "0")},
+--- a/MIOpen/src/solver/batchnorm/forward_spatial_multiple.cpp
++++ b/MIOpen/src/solver/batchnorm/forward_spatial_multiple.cpp
+@@ -176,6 +176,7 @@ ConvSolution BnFwdTrainingSpatialMultiple::GetSolution(
+             {"MIO_BN_GRP0", xlocalsize},
+             {"MIO_BN_GRP1", ylocalsize},
+             {"MIO_BN_GRP2", zlocalsize},
++            {"MIO_BN_GFX101X", (StartsWith(handle.GetDeviceName(), "gfx101") ? "1" : "0")},
+             {"MIO_BN_GFX103X", (StartsWith(handle.GetDeviceName(), "gfx103") ? "1" : "0")},
+             {"MIO_BN_GFX110X", (StartsWith(handle.GetDeviceName(), "gfx110") ? "1" : "0")},
+             {"MIO_BN_GFX120X", (StartsWith(handle.GetDeviceName(), "gfx120") ? "1" : "0")},

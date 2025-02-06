@@ -1,0 +1,40 @@
+FROM rdna1-rocmedge:intermediate
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+
+RUN tar -cvf $ROCM_WORKING_DIR/rocm.tar $ROCM_INSTALL_DIR; \
+    tar -cvf $ROCM_WORKING_DIR/blis.tar /opt/blis
+
+FROM archlinux:base-devel
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+ARG pacman_args="--noconfirm --needed"
+
+RUN pacman -Syu $pacman_args cmake ninja ccache git numactl \
+                             python-yaml \
+                             libdrm \
+                             libpng \
+                             libjpeg-turbo; \
+    yes | pacman -Scc
+
+WORKDIR $ROCM_WORKING_DIR
+
+COPY --from=0 $ROCM_WORKING_DIR/rocm.tar rocm.tar
+COPY --from=0 $ROCM_WORKING_DIR/blis.tar blis.tar
+
+RUN tar -xvf rocm.tar -C /; \
+    tar -xvf blis.tar -C /; \
+    rm rocm.tar blis.tar
+
+RUN git clone --recursive https://github.com/pytorch/pytorch -b v2.5.1 Torch; \
+    git clone --recursive https://github.com/pytorch/audio -b v2.5.1 TorchAudio; \
+    git clone --recursive https://github.com/pytorch/vision -b v0.20.1 TorchVision; \
+    git clone --recursive https://github.com/microsoft/onnxruntime -b v1.20.1 OnnxRT
+
+RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
+    echo "/opt/blis/lib" | tee /etc/ld.so.conf.d/blis.conf; \
+    ldconfig
+
+COPY build-torchonnx build-torchonnx

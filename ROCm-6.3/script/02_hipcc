@@ -1,0 +1,16 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hipcc \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/llvm-project/amd/hipcc
+
+cmake --build $ROCM_BUILD_DIR/hipcc
+cmake --install $ROCM_BUILD_DIR/hipcc --prefix $ROCM_INSTALL_DIR

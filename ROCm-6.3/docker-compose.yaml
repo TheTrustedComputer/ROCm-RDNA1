@@ -1,7 +1,7 @@
 services:
     rocm_build:
-        image: rdna1-rocm54:rocm-build
-        container_name: RDNA1_ROCm54_Build_Phase
+        image: rdna1-rocm63:rocm-build
+        container_name: RDNA1_ROCm63_Build_Phase
         entrypoint: ["bash", "build-rocm"]
         build:
             context: .
@@ -27,8 +27,8 @@ services:
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
     torchonnx_build:
-        image: rdna1-rocm54:torchonnx-build
-        container_name: RDNA1_ROCm54_TorchONNX_Build_Phase
+        image: rdna1-rocm63:torchonnx-build
+        container_name: RDNA1_ROCm63_TorchONNX_Build_Phase
         entrypoint: ["bash", "build-torchonnx"]
         build:
             context: .
@@ -40,6 +40,7 @@ services:
             - /dev/dri:/dev/dri
             - /dev/kfd:/dev/kfd
         environment:
+            - HOME_USER=$HOME_USER
             - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - PYTORCH_ROCM_ARCH=$AMDGPU_TARGETS
             - ROCM_WORKING_DIR=$ROCM_WORKING_DIR
@@ -52,8 +53,8 @@ services:
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
     runtime:
-        image: rdna1-rocm54:runtime
-        container_name: RDNA1_ROCm54_Runtime
+        image: rdna1-rocm63:runtime
+        container_name: RDNA1_ROCm63_Runtime
         build:
             context: .
             dockerfile: dockerfile-runtime

@@ -1,0 +1,53 @@
+FROM rdna1-rocmedge:final
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+
+WORKDIR $ROCM_WORKING_DIR
+
+RUN tar -cvf rocm.tar $ROCM_INSTALL_DIR; \
+    tar -cvf blis.tar /opt/blis; \
+    tar -cvf torchonnx-wheels.tar *.whl
+
+FROM archlinux:base-devel
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+ARG HOME_USER
+ARG pacman_args="--noconfirm --needed"
+
+RUN pacman -Syu $pacman_args python-yaml \
+                             tk \
+                             git \
+                             perl-file-which perl-uri \
+                             numactl \
+                             pipewire-pulse portaudio \
+                             weston \
+                             noto-fonts noto-fonts-extra noto-fonts-cjk noto-fonts-emoji \
+                             glu; \
+    yes | pacman -Scc
+
+WORKDIR $ROCM_WORKING_DIR
+
+COPY --from=0 $ROCM_WORKING_DIR/rocm.tar rocm.tar
+COPY --from=0 $ROCM_WORKING_DIR/blis.tar blis.tar
+
+RUN tar -xvf rocm.tar -C /; \
+    tar -xvf blis.tar -C /; \
+    rm rocm.tar blis.tar
+
+RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/lib/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
+    echo "/opt/blis/lib" | tee /etc/ld.so.conf.d/blis.conf; \
+    ldconfig
+
+RUN useradd -mG audio,video,render -u 4999 $HOME_USER; \
+    groupmod -g 49999 $HOME_USER
+
+COPY --from=0 $ROCM_WORKING_DIR/torchonnx-wheels.tar /home/$HOME_USER/torchonnx-wheels.tar
+RUN chown -R $HOME_USER:$HOME_USER /home/$HOME_USER
+USER $HOME_USER
+
+WORKDIR /home/$HOME_USER
+
+RUN tar -xvf torchonnx-wheels.tar; \
+    rm torchonnx-wheels.tar

@@ -1,0 +1,26 @@
+#! /usr/bin/env bash
+
+set -e
+
+export PATH=$HOME/.protobuf/bin:$PATH
+
+cmake \
+    -B $ROCM_BUILD_DIR/migraphx \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument -I$ROCM_INSTALL_DIR/include -I$ROCM_INSTALL_DIR/include/rocmlir -I$ROCM_INSTALL_DIR/include/rocmlir/external/include -L$HOME/.protobuf/lib" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument -I$ROCM_INSTALL_DIR/include -I$ROCM_INSTALL_DIR/include/rocmlir -I$ROCM_INSTALL_DIR/include/rocmlir/external/include -L$HOME/.protobuf/lib" \
+    -DGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DBUILD_TESTING=OFF \
+    -DMIGRAPHX_USE_COMPOSABLEKERNEL=OFF \
+    -DMIGRAPHX_ENABLE_MLIR=ON \
+    -DMIGRAPHX_USE_HIPBLASLT=OFF \
+    -DProtobuf_LIBRARIES=$HOME/.protobuf/lib/libprotobuf.a \
+    -DProtobuf_INCLUDE_DIR=$HOME/.protobuf/include \
+    -DPROTOBUF_LIBRARY="protobuf" \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/AMDMIGraphX
+
+cmake --build $ROCM_BUILD_DIR/migraphx
+cmake --install $ROCM_BUILD_DIR/migraphx --prefix $ROCM_INSTALL_DIR

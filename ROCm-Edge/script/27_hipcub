@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hipcub \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DHIP_ROOT_DIR="$ROCM_INSTALL_DIR" \
+    -DBUILD_TEST=$ENABLE_BUILD_TESTING \
+    -DBUILD_EXAMPLE=OFF \
+    -DBUILD_BENCHMARK=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/hipCUB
+
+cmake --build $ROCM_BUILD_DIR/hipcub
+cmake --install $ROCM_BUILD_DIR/hipcub --prefix $ROCM_INSTALL_DIR

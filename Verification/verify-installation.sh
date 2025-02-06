@@ -1,8 +1,6 @@
 #! /usr/bin/env bash
 
-PATH=/opt/rocm/bin:$PATH
-
-set -e
+export PATH=/opt/rocm/bin:$PATH
 
 echo "Detecting GPU architectures..."
 rocm_agent_enumerator
@@ -113,5 +111,3 @@ hipcc -O3 -w -march=native -std=c++17 -I/opt/rocm/include -I/opt/rocm/lib/migrap
 build/verify_migraphx
 
 rm -rf build
-
-echo -e "\nAll checks passed!"

@@ -1,0 +1,14 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hipblas-common \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/hipBLAS-common
+
+cmake --build $ROCM_BUILD_DIR/hipblas-common
+cmake --install $ROCM_BUILD_DIR/hipblas-common --prefix $ROCM_INSTALL_DIR

@@ -1,0 +1,149 @@
+FROM ubuntu:24.04
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+ARG ROCM_GIT_CLONE_DIR=ROCm
+ARG ROCM_GIT_TAG_VERSION=rocm-6.3.2
+ARG DEBIAN_FRONTEND=noninteractive
+ARG aptget_args="--no-install-recommends -y"
+
+RUN apt-get update; \
+    apt-get install $aptget_args build-essential gfortran cmake ninja-build ccache \
+                                 git \
+                                 curl \
+                                 kmod \
+                                 python3-dev python3-venv python3-pip python3-yaml python-is-python3 \
+                                 libnuma-dev \
+                                 libelf-dev xxd \
+                                 mesa-common-dev file \
+                                 python3-joblib libmsgpack-cxx-dev \
+                                 libfmt-dev \
+                                 libsqlite3-dev libbz2-dev nlohmann-json3-dev libboost-filesystem-dev libeigen3-dev libfdeep-dev libfplus-dev \
+                                 pybind11-dev \
+                                 libflame-dev libblis-dev; \
+    apt-get clean
+
+RUN pip install --break-system-packages CppHeaderParser
+
+RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/lib/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf
+
+WORKDIR $ROCM_WORKING_DIR/$ROCM_GIT_CLONE_DIR
+
+## ROCm sources
+RUN curl -L https://github.com/ROCm/roctracer/raw/refs/tags/$ROCM_GIT_TAG_VERSION/inc/ext/prof_protocol.h -o $ROCM_WORKING_DIR/prof_protocol.h
+
+# 1) rocm-core
+RUN git clone https://github.com/ROCm/rocm-core -b $ROCM_GIT_TAG_VERSION
+
+# 2) LLVM + HIPCC + ROCm Device Libraries + Code Object Manager
+RUN git clone https://github.com/ROCm/llvm-project -b $ROCM_GIT_TAG_VERSION
+
+# 3) ROCm CMake modules
+RUN git clone https://github.com/ROCm/rocm-cmake -b $ROCM_GIT_TAG_VERSION
+
+# 4) rocprofiler-register
+RUN git clone --recursive https://github.com/ROCm/rocprofiler-register -b $ROCM_GIT_TAG_VERSION
+
+# 5) ROCm SMI Library
+RUN git clone https://github.com/ROCm/rocm_smi_lib -b $ROCM_GIT_TAG_VERSION
+
+# 6) AMD System Management Interface Library
+RUN git clone https://github.com/ROCm/amdsmi -b $ROCM_GIT_TAG_VERSION
+
+WORKDIR $ROCM_WORKING_DIR/$ROCM_GIT_CLONE_DIR/amdsmi
+RUN git clone https://github.com/amd/esmi_ib_library --depth 1 -b esmi_pkg_ver-3.0.3; \
+    mkdir -p include/asm; \
+    cp /usr/include/x86_64-linux-gnu/asm/amd_hsmp.h include/asm/amd_hsmp.h
+WORKDIR $ROCM_WORKING_DIR/$ROCM_GIT_CLONE_DIR
+
+# 7) ROCR Runtime
+RUN git clone https://github.com/ROCm/ROCR-Runtime -b $ROCM_GIT_TAG_VERSION
+
+# 8) rocminfo
+RUN git clone https://github.com/ROCm/rocminfo -b $ROCM_GIT_TAG_VERSION
+
+# 9) half
+RUN git clone https://github.com/ROCm/half -b $ROCM_GIT_TAG_VERSION
+
+# 10) HIP
+RUN git clone https://github.com/ROCm/clr -b $ROCM_GIT_TAG_VERSION; \
+    git clone https://github.com/ROCm/HIP -b $ROCM_GIT_TAG_VERSION
+
+# 11) HIPIFY
+RUN git clone https://github.com/ROCm/HIPIFY -b $ROCM_GIT_TAG_VERSION
+
+# 12) ROC-tracer
+RUN git clone https://github.com/ROCm/roctracer -b $ROCM_GIT_TAG_VERSION
+
+# 13) rocPRIM
+RUN git clone https://github.com/ROCm/rocPRIM -b $ROCM_GIT_TAG_VERSION
+
+# 14) rocRAND
+RUN git clone https://github.com/ROCm/rocRAND -b $ROCM_GIT_TAG_VERSION
+
+# 15) hipRAND
+RUN git clone https://github.com/ROCm/hipRAND -b $ROCM_GIT_TAG_VERSION
+
+# 16) rocBLAS
+RUN git clone https://github.com/ROCm/Tensile -b $ROCM_GIT_TAG_VERSION; \
+    git clone https://github.com/ROCm/rocBLAS -b $ROCM_GIT_TAG_VERSION
+
+# 17) rocSPARSE
+RUN git clone https://github.com/ROCm/rocSPARSE -b $ROCM_GIT_TAG_VERSION
+
+# 18) hipSPARSE
+RUN git clone https://github.com/ROCm/hipSPARSE -b $ROCM_GIT_TAG_VERSION
+
+# 19) rocSOLVER
+RUN git clone https://github.com/ROCm/rocSOLVER -b $ROCM_GIT_TAG_VERSION
+
+# 20) rocThrust
+RUN git clone https://github.com/ROCm/rocThrust -b $ROCM_GIT_TAG_VERSION
+
+# 21) hipBLAS
+RUN git clone https://github.com/ROCm/hipBLAS-common -b $ROCM_GIT_TAG_VERSION; \
+    git clone https://github.com/ROCm/hipBLAS -b $ROCM_GIT_TAG_VERSION
+
+# 22) hipBLASLt
+RUN git clone https://github.com/ROCm/hipBLASLt -b $ROCM_GIT_TAG_VERSION
+
+# 23) hipSOLVER
+RUN git clone https://github.com/ROCm/hipSOLVER -b $ROCM_GIT_TAG_VERSION
+
+# 24) hipCUB
+RUN git clone https://github.com/ROCm/hipCUB -b $ROCM_GIT_TAG_VERSION
+
+# 25) rocFFT
+RUN git clone https://github.com/ROCm/rocFFT -b $ROCM_GIT_TAG_VERSION
+
+# 26) hipFFT
+RUN git clone https://github.com/ROCm/hipFFT -b $ROCM_GIT_TAG_VERSION
+
+# 27) RCCL
+RUN git clone https://github.com/ROCm/rccl -b $ROCM_GIT_TAG_VERSION
+
+# 28) Composable Kernel (experimental)
+# RUN git clone https://github.com/ROCm/composable_kernel -b $ROCM_GIT_TAG_VERSION
+
+# 29) rocMLIR
+RUN git clone https://github.com/ROCm/rocMLIR -b $ROCM_GIT_TAG_VERSION
+
+# 30) MIOpen
+RUN git clone https://github.com/ROCm/MIOpen -b $ROCM_GIT_TAG_VERSION
+
+# 31) MIGraphX
+RUN git clone https://github.com/ROCm/AMDMIGraphX -b $ROCM_GIT_TAG_VERSION
+
+WORKDIR $ROCM_WORKING_DIR
+
+## Third-party libraries
+
+# 1) Protobuf 3.21.12
+RUN git clone https://github.com/protocolbuffers/protobuf -b v3.21.12
+
+# 2) MAGMA 2.8.0
+RUN git clone https://github.com/icl-utk-edu/magma -b v2.8.0
+
+COPY script script
+COPY patch patch
+COPY build-rocm build-rocm

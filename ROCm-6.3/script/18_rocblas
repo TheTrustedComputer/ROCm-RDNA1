@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocblas \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DTensile_ARCHITECTURE="$AMDGPU_TARGETS" \
+    -DTensile_TEST_LOCAL_PATH=$ROCM_SOURCE_DIR/Tensile \
+    -DBUILD_WITH_HIPBLASLT=OFF \
+    -DBUILD_CLIENTS_TESTS=OFF \
+    -DBUILD_CLIENTS_SAMPLES=OFF \
+    -DBUILD_CLIENTS_BENCHMARKS=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocBLAS
+
+cmake --build $ROCM_BUILD_DIR/rocblas
+cmake --install $ROCM_BUILD_DIR/rocblas --prefix $ROCM_INSTALL_DIR
+rm -f a.out

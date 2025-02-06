@@ -1,0 +1,23 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hip \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCLR_BUILD_HIP=ON \
+    -DCLR_BUILD_OCL=OFF \
+    -DHIP_PLATFORM=amd \
+    -DHIP_COMMON_DIR=$ROCM_SOURCE_DIR/HIP \
+    -DCMAKE_INSTALL_PREFIX="$ROCM_INSTALL_DIR" \
+    -DPROF_API_HEADER_PATH=$ROCM_WORKING_DIR \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/clr
+
+cmake --build $ROCM_BUILD_DIR/hip
+cmake --install $ROCM_BUILD_DIR/hip --prefix $ROCM_INSTALL_DIR
+rm -f $ROCM_INSTALL_DIR/hip/bin/*.bat

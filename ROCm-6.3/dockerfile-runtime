@@ -1,4 +1,4 @@
-FROM rdna1-rocm54:final
+FROM rdna1-rocm63:final
 
 ARG ROCM_WORKING_DIR
 ARG ROCM_INSTALL_DIR
@@ -8,7 +8,7 @@ WORKDIR $ROCM_WORKING_DIR
 RUN tar -cvf rocm.tar $ROCM_INSTALL_DIR; \
     tar -cvf torchonnx-wheels.tar *.whl
 
-FROM debian:12-slim
+FROM ubuntu:24.04
 
 ARG HOME_USER
 ARG ROCM_WORKING_DIR
@@ -22,14 +22,13 @@ RUN apt-get update; \
                                  git \
                                  kmod \
                                  libnuma1 \
-                                 libelf1 \
+                                 libelf1t64 \
                                  libdrm-amdgpu1 \
                                  file libfile-which-perl liburi-encode-perl \
                                  libfmt9 \
-                                 libflame1 libblis4 \
+                                 libflame1t64 libblis4 \
                                  pipewire-pulse pipewire-alsa ffmpeg libportaudio2 \
-                                 weston libglu1-mesa \
-                                 procps; \
+                                 weston libglu1-mesa; \
     apt-get clean
 
 WORKDIR $ROCM_WORKING_DIR
@@ -38,7 +37,7 @@ COPY --from=0 $ROCM_WORKING_DIR/rocm.tar rocm.tar
 RUN tar -xvf rocm.tar -C /; \
     rm rocm.tar
 
-RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
+RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/lib/migraphx/lib\n$ROCM_INSTALL_DIR/lib/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
     ldconfig
 
 RUN groupadd -r render; \

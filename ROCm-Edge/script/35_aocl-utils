@@ -1,0 +1,24 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/aocl-utils \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/clang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/clang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_INSTALL_PREFIX=/opt/blis \
+    -DAU_BUILD_SHARED_LIBS=ON \
+    -DAU_BUILD_STATIC_LIBS=OFF \
+    -DAU_BUILD_TESTS=OFF \
+    -DAU_BUILD_DOCS=OFF \
+    -DAU_BUILD_EXAMPLES=OFF \
+    -DAU_ENABLE_ASSERTIONS=OFF \
+    -G Ninja \
+    $ROCM_WORKING_DIR/aocl-utils
+
+cmake --build $ROCM_BUILD_DIR/aocl-utils
+cmake --install $ROCM_BUILD_DIR/aocl-utils
+

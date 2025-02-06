@@ -1,8 +1,7 @@
 services:
     rocm_build:
-        image: rdna1-rocm54:rocm-build
-        container_name: RDNA1_ROCm54_Build_Phase
-        entrypoint: ["bash", "build-rocm"]
+        image: rdna1-rocmedge:rocm-build
+        container_name: RDNA1_ROCm-Edge_Build_Phase
         build:
             context: .
             dockerfile: dockerfile-rocm
@@ -13,23 +12,27 @@ services:
             - /dev/dri:/dev/dri
             - /dev/kfd:/dev/kfd
         environment:
-            - AMDGPU_TARGETS=$AMDGPU_TARGETS
-            - ROCM_MAJOR_VERSION=$ROCM_MAJOR_VERSION
-            - ROCM_MINOR_VERSION=$ROCM_MINOR_VERSION
-            - ROCM_PATCH_VERSION=$ROCM_PATCH_VERSION
-            - ROCM_VERSION=$ROCM_MAJOR_VERSION.$ROCM_MINOR_VERSION.$ROCM_PATCH_VERSION
             - ROCM_WORKING_DIR=$ROCM_WORKING_DIR
             - ROCM_SOURCE_DIR=$ROCM_SOURCE_DIR
             - ROCM_BUILD_DIR=$ROCM_BUILD_DIR
             - ROCM_INSTALL_DIR=$ROCM_INSTALL_DIR
             - ROCM_PATH=$ROCM_INSTALL_DIR
+            - ROCM_MAJOR_VERSION=$ROCM_MAJOR_VERSION
+            - ROCM_MINOR_VERSION=$ROCM_MINOR_VERSION
+            - ROCM_PATCH_VERSION=$ROCM_PATCH_VERSION
+            - ROCM_VERSION=$ROCM_MAJOR_VERSION.$ROCM_MINOR_VERSION.$ROCM_PATCH_VERSION
+            - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - LIBRARY_PATH=$LIBRARY_PATH
-        working_dir: $ROCM_WORKING_DIR
+        volumes:
+            - $HOME/Docker/ROCm-Edge/script:$ROCM_WORKING_DIR/script
+            - $HOME/Docker/ROCm-Edge/patch:$ROCM_WORKING_DIR/patch
+        working_dir: $ROCM_WORKING_DIR/script
+        stdin_open: true
+        tty: true
         network_mode: default
     torchonnx_build:
-        image: rdna1-rocm54:torchonnx-build
-        container_name: RDNA1_ROCm54_TorchONNX_Build_Phase
-        entrypoint: ["bash", "build-torchonnx"]
+        image: rdna1-rocmedge:torchonnx-build
+        container_name: RDNA1_ROCm-Edge_TorchONNX_Build_Phase
         build:
             context: .
             dockerfile: dockerfile-torchonnx
@@ -40,6 +43,7 @@ services:
             - /dev/dri:/dev/dri
             - /dev/kfd:/dev/kfd
         environment:
+            - HOME_USER=$HOME_USER
             - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - PYTORCH_ROCM_ARCH=$AMDGPU_TARGETS
             - ROCM_WORKING_DIR=$ROCM_WORKING_DIR
@@ -52,8 +56,8 @@ services:
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
     runtime:
-        image: rdna1-rocm54:runtime
-        container_name: RDNA1_ROCm54_Runtime
+        image: rdna1-rocmedge:runtime
+        container_name: RDNA1_ROCm-Edge_Runtime
         build:
             context: .
             dockerfile: dockerfile-runtime
@@ -68,6 +72,8 @@ services:
             - DISPLAY=$DISPLAY
             - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
             - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
+            - MIOPEN_FIND_ENFORCE=search
+            - MIOPEN_CHECK_NUMERICS=4
             - GLOO_SOCKET_IFNAME=$GLOO_SOCKET_IFNAME
         volumes:
             - $SOFTWARE_DIR:/home/$HOME_USER/Software

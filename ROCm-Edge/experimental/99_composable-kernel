@@ -1,0 +1,25 @@
+#! /usr/bin/env bash
+
+set -e
+
+SCCACHE_IDLE_TIMEOUT=0 sccache --start-server
+
+cmake \
+    -B $ROCM_BUILD_DIR/composable-kernel \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_C_COMPILER_LAUNCHER=sccache \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
+    -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DGPU_ARCHS="gfx940;$AMDGPU_TARGETS" \
+    -DBUILD_TESTING=ON \
+    -DDL_KERNELS=ON \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/composable_kernel
+
+cmake --build $ROCM_BUILD_DIR/composable-kernel
+cmake --install $ROCM_BUILD_DIR/composable-kernel --prefix $ROCM_INSTALL_DIR
+sccache --stop-server

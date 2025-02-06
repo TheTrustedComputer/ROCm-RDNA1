@@ -1,8 +1,8 @@
 # ROCm-RDNA1
 
-ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set. Other ROCm components aren't necessary for either of these, so they're excluded from the script to streamline the operation.
+ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set.
 
-In our setup, we have two 8 GB AMD Radeon RX 5500 XTs for machine learning purposes, not the standard 4 GB model. We must set the GPU target to `gfx1012` to ensure interoperability without broken workarounds with `HSA_OVERRIDE_GFX_VERSION` that may lead to unpredictable behavior from mismatched instruction sets. The 5600 XT and 5700 XT correspond to `gfx1010` respectively, so choose the matching target with your AMD GPU.
+In our setup, we have two 8 GB AMD Radeon RX 5500 XTs for machine learning purposes, not the standard 4 GB model. We set the GPU target to `gfx1012` to ensure interoperability without broken workarounds with `HSA_OVERRIDE_GFX_VERSION` that may lead to unpredictable behavior from mismatched instruction sets. The 5600 XT and 5700 XT correspond to `gfx1010` respectively, so choose the matching target with your AMD GPU.
 
 ## Disclaimers
 
@@ -54,7 +54,7 @@ Make a local copy of this repository on your computer. You may do this via a `gi
 
 ### 2. Select a volume to mount the software directory in the container
 
-By default, all potential software or applications are stored in the ``$HOME/Docker/Software`` directory under the Docker user ``thetrustedcontainer`` for persistence. You can change these by editing the ``.env`` file in the ``SOFTWARE_DIR`` and ``HOME_USER`` fields. As a reminder, don't forget to modify ``AMDGPU_TARGETS`` for your GPU!
+By default, all potential software or applications are stored in the ``$HOME/Docker/Software`` directory under the Docker user ``rdna1_rocm-A.B_container`` for persistence, where ``A.B`` is the point release number. You can change these by editing the ``.env`` file in the ``SOFTWARE_DIR`` and ``HOME_USER`` fields. As a reminder, don't forget to modify ``AMDGPU_TARGETS`` for your GPU!
 
 ### 3. Build the runtime Docker image
 
@@ -65,14 +65,14 @@ cd ROCm-RDNA1/ROCm-5.4
 ./build-image
 ```
 
-You're done! Patience is key, as this may take several hours depending on your hardware. As for the other versions, replace 5.4 with another point release such as 6.3, and repeat the above lines. When the image is ready, attach the container with:
+You're done! Patience is key, as this may take several hours depending on your hardware. As for the other versions, replace 5.4 with another release, and repeat the above lines. When the image is ready, attach the container with:
 
 ```sh
 docker-compose up runtime
-docker attach RDNA1_ROCm54_Runtime # do this on another session
+docker attach RDNA1_ROCm54_Runtime # do this on another terminal session or window
 ```
 
-We're not kidding; it's that simple! The runtime image includes PyTorch, TorchAudio, TorchVision, and ONNX Runtime Python wheels that you can install via pip. You're all set to experiment with the world of AI. 
+We're not kidding; it's that simple! The runtime image includes PyTorch, TorchAudio, TorchVision, and ONNX Runtime Python wheels that you can install via pip. You're all set to experiment with the world of AI!
 
 ## Offered Configurations
 
@@ -80,7 +80,7 @@ We're not kidding; it's that simple! The runtime image includes PyTorch, TorchAu
 
 Recommended for the most stable and efficient production environment. It's not nearly as fast as the official ROCm 5.2 with ``HSA_OVERRIDE_GFX_VERSION=10.3.0``, but it has the advantage of being a native build.
 
-### Ubuntu 24.04: ROCm 6.3.1 + PyTorch 2.5.1 + ONNX Runtime 1.20.1
+### Ubuntu 24.04: ROCm 6.3.2 + PyTorch 2.6.0 + ONNX Runtime 1.20.1
 
 Provides newer software and libraries when performance isn't a priority. Choose this if you have conflicting dependencies, erratic program behavior, or runtime errors due to incompatible APIs on the Debian 12 config.
 
@@ -94,11 +94,12 @@ This distribution tends to have the latest and greatest of just about everything
  - ROCm 5.3.3 and earlier are NOT build-compatible with PyTorch 2. You'll need PyTorch 1.13.1, or use hacky workarounds.
  - It is possible to build PyTorch 2.3.x against ROCm < 5.7 for RDNA1, but the process is broken after integrating AOTriton. Consider avoiding this.
  - hipBLASLt is created as a dummy library, as it's not yet supported on this architecture while permitting linkage to PyTorch.
- - This PyTorch cannot use flash or memory-efficient attention because Triton does not implement support for that architecture class.
+ - This PyTorch cannot use flash or memory-efficient attention for transformer models because Triton currently does not implement support for RDNA1.
  - ONNX Runtime 1.17 needs ROCm >= 5.6, and ONNX Runtime 1.20 depends on ROCm >= 6.0 for a successful build.
  - These libraries are built without testing enabled. Copy the verification directory to the container to confirm their basic functionality.
  - The default CMake build type is set to `Release` and has `-march=native -O3 -s -w` appended to the compiler flags.
  - Composable kernels won't compile out of the box but will when patched to include them (extremely slow and highly experimental).
+ - **URGENT**: The PyTorch ROCm 5.2 precompiled wheels no longer run with glibc 2.41 and later due to changes in shared library execution policies. You must compile ROCm from source code for continued operation on RDNA1. There is no straightforward solution besides downgrading to a stable Linux distribution shipping with glibc <= 2.40.
 
 ## Acknowledgements
 

@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocprofiler-register \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DROCPROFILER_REGISTER_BUILD_TESTS=OFF \
+    -DROCPROFILER_REGISTER_BUILD_SAMPLES=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocprofiler-register
+
+cmake --build $ROCM_BUILD_DIR/rocprofiler-register
+cmake --install $ROCM_BUILD_DIR/rocprofiler-register --prefix $ROCM_INSTALL_DIR

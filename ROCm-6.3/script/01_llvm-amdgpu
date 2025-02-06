@@ -1,0 +1,28 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/llvm-amdgpu \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w" \
+    -DLLVM_TARGETS_TO_BUILD="AMDGPU;Native" \
+    -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lld;compiler-rt" \
+    -DLLVM_ENABLE_RUNTIMES="libcxx;libcxxabi" \
+    -DLLVM_DEFAULT_TARGET_TRIPLE="x86_64-pc-linux-gnu" \
+    -DLLVM_CCACHE_BUILD=ON \
+    -DCLANG_ENABLE_AMDCLANG=ON \
+    -DLIBCXX_ENABLE_STATIC=ON \
+    -DLIBCXXABI_ENABLE_STATIC=ON \
+    -DLIBCXXABI_USE_LLVM_UNWINDER=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/llvm-project/llvm
+
+cmake --build $ROCM_BUILD_DIR/llvm-amdgpu
+cmake --install $ROCM_BUILD_DIR/llvm-amdgpu --prefix $ROCM_INSTALL_DIR/lib/llvm
+
+pushd $ROCM_INSTALL_DIR > /dev/null
+ln -sf lib/llvm llvm
+popd > /dev/null
+

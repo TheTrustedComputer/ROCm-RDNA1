@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocprim \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DBUILD_TEST=OFF \
+    -DBUILD_EXAMPLE=OFF \
+    -DBUILD_BENCHMARK=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocPRIM
+
+cmake --build $ROCM_BUILD_DIR/rocprim
+cmake --install $ROCM_BUILD_DIR/rocprim --prefix $ROCM_INSTALL_DIR

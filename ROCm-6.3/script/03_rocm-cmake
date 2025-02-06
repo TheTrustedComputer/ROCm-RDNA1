@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/rocm-cmake \
+    -DCMAKE_BUILD_TYPE=Release \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/rocm-cmake
+
+cmake --build $ROCM_BUILD_DIR/rocm-cmake
+cmake --install $ROCM_BUILD_DIR/rocm-cmake --prefix $ROCM_INSTALL_DIR

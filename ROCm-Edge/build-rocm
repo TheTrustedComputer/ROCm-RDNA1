@@ -1,0 +1,28 @@
+#! /usr/bin/env bash
+
+export PATH=$ROCM_INSTALL_DIR/bin:$ROCM_INSTALL_DIR/lib/llvm/bin:$HOME/.protobuf/bin:$PATH
+
+pushd $ROCM_SOURCE_DIR > /dev/null
+git apply $ROCM_WORKING_DIR/patch/miopen_composable-kernel_gfx101x
+git apply $ROCM_WORKING_DIR/patch/migraphx_gfx101x
+git apply $ROCM_WORKING_DIR/patch/rocrand_gfx101x
+git apply $ROCM_WORKING_DIR/patch/migraphx_msgpack-cxx
+git apply $ROCM_WORKING_DIR/patch/hipblaslt_dummy
+popd > /dev/null
+
+set -e
+
+start_time=$(date +%s)
+
+pushd $ROCM_WORKING_DIR/script > /dev/null
+for file in *
+do
+    bash $file
+    ldconfig
+done
+popd > /dev/null
+
+build_time=$(($(date +%s) - $start_time))
+echo -ne "\nTook $build_time second" && [ $build_time -ne 1 ] && echo "s" || echo "."
+
+rm -rf $ROCM_BUILD_DIR

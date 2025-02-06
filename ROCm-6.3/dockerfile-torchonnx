@@ -1,0 +1,44 @@
+FROM rdna1-rocm63:intermediate
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+
+RUN tar -cvf $ROCM_WORKING_DIR/rocm.tar $ROCM_INSTALL_DIR
+
+FROM ubuntu:24.04
+
+ARG ROCM_WORKING_DIR
+ARG ROCM_INSTALL_DIR
+ARG DEBIAN_FRONTEND=noninteractive
+ARG aptget_args="--no-install-recommends -y"
+
+RUN apt-get update; \
+    apt-get install $aptget_args build-essential cmake ninja-build ccache \
+                                 git \
+                                 curl \
+                                 python3-dev python3-venv python3-pip \
+                                 libnuma-dev \
+                                 libelf-dev \
+                                 libdrm-dev \
+                                 libpng-dev libjpeg-turbo8-dev \
+                                 libflame-dev libblis-dev; \
+    apt-get clean
+
+WORKDIR $ROCM_WORKING_DIR
+
+COPY --from=0 $ROCM_WORKING_DIR/rocm.tar rocm.tar
+
+RUN tar -xvf rocm.tar -C /; \
+    rm rocm.tar
+
+RUN git clone --recursive https://github.com/pytorch/pytorch -b v2.6.0 Torch; \
+    git clone --recursive https://github.com/pytorch/audio -b v2.6.0 TorchAudio; \
+    git clone --recursive https://github.com/pytorch/vision -b v0.20.0 TorchVision; \
+    git clone --recursive https://github.com/microsoft/onnxruntime -b v1.20.1 OnnxRT
+
+RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
+    ldconfig
+
+COPY torchonnx script
+COPY patch patch
+COPY build-torchonnx build-torchonnx

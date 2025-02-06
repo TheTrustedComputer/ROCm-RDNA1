@@ -3,13 +3,13 @@
 set -e
 
 cd `dirname $0`
-echo -e "\e[1m[1/5] Building ROCm 5.4 software stack...\e[0m"
+echo -e "\e[1m[1/5] Building ROCm Edge software stack...\e[0m"
 docker-compose up --build rocm_build
 echo -e "\e[1m[2/5] Commiting changes...\e[0m"
-docker commit RDNA1_ROCm54_Build_Phase rdna1-rocm54:intermediate
+docker commit RDNA1_ROCm-Edge_Build_Phase rdna1-rocmedge:intermediate
 echo -e "\e[1m[3/5] Building PyTorch and ONNX Runtime...\e[0m"
 docker-compose up --build torchonnx_build
 echo -e "\e[1m[4/5] Commiting changes...\e[0m"
-docker commit RDNA1_ROCm54_TorchONNX_Build_Phase rdna1-rocm54:final
+docker commit RDNA1_ROCm-Edge_TorchONNX_Build_Phase rdna1-rocmedge:final
 echo -e "\e[1m[5/5] Building the runtime image...\e[0m"
 docker-compose up --build --detach runtime

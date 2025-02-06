@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+set -e
+
+cmake \
+    -B $ROCM_BUILD_DIR/hipblaslt \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/amdclang \
+    -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/amdclang++ \
+    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DAMDGPU_TARGETS=gfx1100 \
+    -DBUILD_WITH_TENSILE=OFF \
+    -DBUILD_CLIENTS_TESTS=OFF \
+    -DBUILD_CLIENTS_SAMPLES=OFF \
+    -DBUILD_CLIENTS_BENCHMARKS=OFF \
+    -G Ninja \
+    $ROCM_SOURCE_DIR/hipBLASLt
+
+cmake --build $ROCM_BUILD_DIR/hipblaslt
+cmake --install $ROCM_BUILD_DIR/hipblaslt --prefix $ROCM_INSTALL_DIR
