@@ -80,7 +80,7 @@ We're not kidding; it's that simple! The runtime image includes PyTorch, TorchAu
 
 Recommended for the most stable and efficient production environment. It's not nearly as fast as the official ROCm 5.2 with ``HSA_OVERRIDE_GFX_VERSION=10.3.0``, but it has the advantage of being a native build.
 
-### Ubuntu 24.04: ROCm 6.3.2 + PyTorch 2.6.0 + ONNX Runtime 1.20.1
+### Ubuntu 24.04: ROCm 6.3.2 + PyTorch 2.5.1 + ONNX Runtime 1.20.1
 
 Provides newer software and libraries when performance isn't a priority. Choose this if you have conflicting dependencies, erratic program behavior, or runtime errors due to incompatible APIs on the Debian 12 config.
 

@@ -31,9 +31,9 @@ COPY --from=0 $ROCM_WORKING_DIR/rocm.tar rocm.tar
 RUN tar -xvf rocm.tar -C /; \
     rm rocm.tar
 
-RUN git clone --recursive https://github.com/pytorch/pytorch -b v2.6.0 Torch; \
-    git clone --recursive https://github.com/pytorch/audio -b v2.6.0 TorchAudio; \
-    git clone --recursive https://github.com/pytorch/vision -b v0.20.0 TorchVision; \
+RUN git clone --recursive https://github.com/pytorch/pytorch -b v2.5.1 Torch; \
+    git clone --recursive https://github.com/pytorch/audio -b v2.5.1 TorchAudio; \
+    git clone --recursive https://github.com/pytorch/vision -b v0.20.1 TorchVision; \
     git clone --recursive https://github.com/microsoft/onnxruntime -b v1.20.1 OnnxRT
 
 RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \

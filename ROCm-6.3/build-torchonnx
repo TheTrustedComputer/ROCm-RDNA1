@@ -2,6 +2,7 @@
 
 pushd $ROCM_WORKING_DIR > /dev/null
 git apply patch/torch_O3
+# git apply patch/torch_xnnpack_static-cast
 popd > /dev/null
 
 set -e
