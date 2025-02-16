@@ -65,6 +65,7 @@ services:
             - /dev/dri:/dev/dri
             - /dev/kfd:/dev/kfd
         environment:
+            - PS1="\e[1m[ ROCm 5.4 for `/opt/rocm/bin/rocm_agent_enumerator | sort -u | sed -z "s/gfx000\n//g" | tr "\n" " "`] \W\e[0m\$ "
             - DISPLAY=$DISPLAY
             - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
             - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR

@@ -88,18 +88,18 @@ Provides newer software and libraries when performance isn't a priority. Choose 
 
 This distribution tends to have the latest and greatest of just about everything. You might want to give it a shot if you value living on the bleeding edge at the expense of the occasional bug.
 
-## Notes
+## Considerations
 
  - PyTorch 2.2.2 is recommended for security reasons as older ones contain a critical vulnerability that could lead to remote code execution.
  - ROCm 5.3.3 and earlier are NOT build-compatible with PyTorch 2. You'll need PyTorch 1.13.1, or use hacky workarounds.
- - It is possible to build PyTorch 2.3.x against ROCm < 5.7 for RDNA1, but the process is broken after integrating AOTriton. Consider avoiding this.
+ - It is possible to build PyTorch 2.3.x against ROCm < 5.7 for RDNA1, but the process is broken after integrating AOTriton. Avoid at all costs.
  - hipBLASLt is created as a dummy library, as it's not yet supported on this architecture while permitting linkage to PyTorch.
  - This PyTorch cannot use flash or memory-efficient attention for transformer models because Triton currently does not implement support for RDNA1.
  - ONNX Runtime 1.17 needs ROCm >= 5.6, and ONNX Runtime 1.20 depends on ROCm >= 6.0 for a successful build.
  - These libraries are built without testing enabled. Copy the verification directory to the container to confirm their basic functionality.
  - The default CMake build type is set to `Release` and has `-march=native -O3 -s -w` appended to the compiler flags.
- - Composable kernels won't compile out of the box but will when patched to include them (extremely slow and highly experimental).
- - **URGENT**: The PyTorch ROCm 5.2 precompiled wheels no longer run with glibc 2.41 and later due to changes in shared library execution policies. You must compile ROCm from source code for continued operation on RDNA1. There is no straightforward solution besides downgrading to a stable Linux distribution shipping with glibc <= 2.40.
+ - Composable kernels won't compile out of the box but will when patched to include them (extremely slow build time and highly experimental).
+ - **URGENT**: The PyTorch ROCm 5.2 precompiled wheels no longer run with glibc 2.41 and later due to changes in shared library execution policies. You must compile ROCm from source code for continued operation on RDNA1. There is no straightforward solution besides downgrading your container to a stable distribution shipping with glibc <= 2.40.
 
 ## Acknowledgements
 
