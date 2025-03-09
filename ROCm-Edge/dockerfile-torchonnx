@@ -28,10 +28,10 @@ RUN tar -xvf rocm.tar -C /; \
     tar -xvf blis.tar -C /; \
     rm rocm.tar blis.tar
 
-RUN git clone --recursive https://github.com/pytorch/pytorch -b v2.5.1 Torch; \
-    git clone --recursive https://github.com/pytorch/audio -b v2.5.1 TorchAudio; \
-    git clone --recursive https://github.com/pytorch/vision -b v0.20.1 TorchVision; \
-    git clone --recursive https://github.com/microsoft/onnxruntime -b v1.20.1 OnnxRT
+RUN git clone --recursive https://github.com/pytorch/pytorch -b v2.6.0 Torch; \
+    git clone --recursive https://github.com/pytorch/audio -b v2.6.0 TorchAudio; \
+    git clone --recursive https://github.com/pytorch/vision -b v0.21.0 TorchVision; \
+    git clone --recursive https://github.com/microsoft/onnxruntime -b v1.20.2 OnnxRT
 
 RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
     echo "/opt/blis/lib" | tee /etc/ld.so.conf.d/blis.conf; \

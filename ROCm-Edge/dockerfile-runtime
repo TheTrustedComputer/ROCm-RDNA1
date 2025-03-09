@@ -51,3 +51,5 @@ WORKDIR /home/$HOME_USER
 
 RUN tar -xvf torchonnx-wheels.tar; \
     rm torchonnx-wheels.tar
+
+RUN echo 'PS1="\[\e[1m[RDNA1 ROCm Edge]\] \W\[\e[0m\]\$ "' >> .bashrc

@@ -3,7 +3,7 @@ FROM archlinux:base-devel
 ARG ROCM_WORKING_DIR
 ARG ROCM_INSTALL_DIR
 ARG ROCM_GIT_CLONE_DIR=ROCm
-ARG ROCM_GIT_TAG_VERSION=rocm-6.3.2
+ARG ROCM_GIT_TAG_VERSION=rocm-6.3.3
 ARG pacman_args="--noconfirm --needed"
 
 RUN pacman -Syu $pacman_args gcc-fortran cmake ninja ccache git numactl \
@@ -145,3 +145,4 @@ RUN git clone https://github.com/amd/libflame -b 5.0 flame
 RUN git clone https://github.com/amd/blis -b 5.0
 
 COPY build-rocm build-rocm
+COPY experimental experimental
