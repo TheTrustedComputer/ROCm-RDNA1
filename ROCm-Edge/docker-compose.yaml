@@ -1,7 +1,7 @@
 services:
     rocm_build:
         image: rdna1-rocmedge:rocm-build
-        container_name: RDNA1_ROCm-Edge_Build_Phase
+        container_name: RDNA1_ROCmEdge_Build_Phase
         build:
             context: .
             dockerfile: dockerfile-rocm
@@ -32,7 +32,7 @@ services:
         network_mode: default
     torchonnx_build:
         image: rdna1-rocmedge:torchonnx-build
-        container_name: RDNA1_ROCm-Edge_TorchONNX_Build_Phase
+        container_name: RDNA1_ROCmEdge_TorchONNX_Build_Phase
         build:
             context: .
             dockerfile: dockerfile-torchonnx
@@ -57,7 +57,7 @@ services:
         network_mode: default
     runtime:
         image: rdna1-rocmedge:runtime
-        container_name: RDNA1_ROCm-Edge_Runtime
+        container_name: RDNA1_ROCmEdge_Runtime
         build:
             context: .
             dockerfile: dockerfile-runtime

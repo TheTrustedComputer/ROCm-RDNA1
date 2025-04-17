@@ -3,7 +3,6 @@
 set -e
 
 SCCACHE_IDLE_TIMEOUT=0 sccache --start-server
-
 cmake \
     -B $ROCM_BUILD_DIR/composable-kernel \
     -DCMAKE_BUILD_TYPE=Release \
@@ -14,8 +13,8 @@ cmake \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
     -DGPU_TARGETS="$AMDGPU_TARGETS" \
-    -DGPU_ARCHS="gfx940;$AMDGPU_TARGETS" \
-    -DBUILD_TESTING=ON \
+    -DGPU_ARCHS="gfx942;$AMDGPU_TARGETS" \
+    -DBUILD_TESTING=OFF \
     -DDL_KERNELS=ON \
     -G Ninja \
     $ROCM_SOURCE_DIR/composable_kernel

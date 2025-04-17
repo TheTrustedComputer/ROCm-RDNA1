@@ -37,5 +37,5 @@ popd > /dev/null
 mkdir $ROCM_INSTALL_DIR/magma
 cp -r $ROCM_WORKING_DIR/magma/lib $ROCM_WORKING_DIR/magma/include $ROCM_INSTALL_DIR/magma
 mv -f $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc.in $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc
-sed -i "s/0.0.0/2.8.0/g" $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc
+sed -i "s/0.0.0/2.9.0/g" $ROCM_INSTALL_DIR/magma/lib/pkgconfig/magma.pc
 rm -f $ROCM_INSTALL_DIR/magma/include/Makefile*
