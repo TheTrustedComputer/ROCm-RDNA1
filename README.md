@@ -54,7 +54,7 @@ Make a local copy of this repository on your computer. You may do this via a `gi
 
 ### 2. Select a volume to mount the software directory in the container
 
-By default, all potential software or applications are stored in the ``$HOME/Docker/Software`` directory under the Docker user ``rdna1_rocm-A.B_container`` for persistence, where ``A.B`` is the ROCm point release number. You can change these by editing the ``.env`` file in the ``SOFTWARE_DIR`` and ``HOME_USER`` fields. As a reminder, don't forget to modify ``AMDGPU_TARGETS`` for your GPU!
+By default, all applications are stored in the ``$HOME/Docker/Apps`` directory under the Docker user ``rdna1_rocm-A.B_container`` for persistence, where ``A.B`` is the ROCm point release number. You can change these by editing the ``.env`` file in the ``SOFTWARE_DIR`` and ``HOME_USER`` fields. As a reminder, don't forget to modify ``AMDGPU_TARGETS`` for your GPU!
 
 ### 3. Build the runtime Docker image
 
