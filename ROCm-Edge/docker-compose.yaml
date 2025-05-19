@@ -76,7 +76,7 @@ services:
             - MIOPEN_CHECK_NUMERICS=4
             - GLOO_SOCKET_IFNAME=$GLOO_SOCKET_IFNAME
         volumes:
-            - $SOFTWARE_DIR:/home/$HOME_USER/Software
+            - $SOFTWARE_DIR:/home/$HOME_USER/Apps
             - /dev/shm:/dev/shm
             - /tmp/.X11-unix:/tmp/.X11-unix
             - $XDG_RUNTIME_DIR:$XDG_RUNTIME_DIR
