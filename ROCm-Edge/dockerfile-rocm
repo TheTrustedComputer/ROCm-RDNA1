@@ -3,7 +3,7 @@ FROM archlinux:base-devel
 ARG ROCM_WORKING_DIR
 ARG ROCM_INSTALL_DIR
 ARG ROCM_GIT_CLONE_DIR=ROCm
-ARG ROCM_GIT_TAG_VERSION=rocm-6.3.3
+ARG ROCM_GIT_TAG_VERSION=rocm-6.4.0
 ARG pacman_args="--noconfirm --needed"
 
 RUN pacman -Syu $pacman_args gcc-fortran cmake ninja ccache sccache git numactl \
@@ -136,13 +136,13 @@ RUN git clone https://github.com/protocolbuffers/protobuf -b v3.21.12
 RUN git clone https://github.com/icl-utk-edu/magma -b v2.9.0
 
 # 3) AOCL-UTILS
-RUN git clone https://github.com/amd/aocl-utils -b 5.0
+RUN git clone https://github.com/amd/aocl-utils -b 5.1
 
 # 4) AOCL-BLAS (BLIS fork)
-RUN git clone https://github.com/amd/libflame -b 5.0 flame
+RUN git clone https://github.com/amd/libflame -b 5.1 flame
 
 # 5) AOCL-LAPACK (FLAME fork)
-RUN git clone https://github.com/amd/blis -b 5.0
+RUN git clone https://github.com/amd/blis -b AOCL-5.1-GA
 
 COPY build-rocm build-rocm
 COPY experimental experimental

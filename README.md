@@ -54,7 +54,7 @@ Make a local copy of this repository on your computer. You may do this via a `gi
 
 ### 2. Select a volume to mount the software directory in the container
 
-By default, all potential software or applications are stored in the ``$HOME/Docker/Software`` directory under the Docker user ``rdna1_rocm-A.B_container`` for persistence, where ``A.B`` is the point release number. You can change these by editing the ``.env`` file in the ``SOFTWARE_DIR`` and ``HOME_USER`` fields. As a reminder, don't forget to modify ``AMDGPU_TARGETS`` for your GPU!
+By default, all potential software or applications are stored in the ``$HOME/Docker/Software`` directory under the Docker user ``rdna1_rocm-A.B_container`` for persistence, where ``A.B`` is the ROCm point release number. You can change these by editing the ``.env`` file in the ``SOFTWARE_DIR`` and ``HOME_USER`` fields. As a reminder, don't forget to modify ``AMDGPU_TARGETS`` for your GPU!
 
 ### 3. Build the runtime Docker image
 
@@ -80,7 +80,7 @@ We're not kidding; it's that simple! The runtime image includes PyTorch, TorchAu
 
 Recommended for the most stable and efficient production environment. It's not nearly as fast as the official ROCm 5.2 with ``HSA_OVERRIDE_GFX_VERSION=10.3.0``, but it has the advantage of being a native build.
 
-### Ubuntu 24.04: ROCm 6.3.3 + PyTorch 2.5.1 + ONNX Runtime 1.20.2
+### Ubuntu 24.04: ROCm 6.3.3 + PyTorch 2.5.1 + ONNX Runtime 1.22.0
 
 Provides newer software and libraries when performance isn't a priority. Choose this if you have conflicting dependencies, erratic program behavior, or runtime errors due to incompatible APIs on the Debian 12 config.
 
@@ -91,7 +91,7 @@ This distribution tends to have the latest and greatest of just about everything
 ## Considerations
 
  - PyTorch 2.2.2 is recommended for security reasons as older ones contain a critical vulnerability that could lead to remote code execution.
- - ROCm 5.3.3 and earlier are NOT build-compatible with PyTorch 2. You'll need PyTorch 1.13.1, or use hacky workarounds.
+ - ROCm 5.3.3 and earlier are NOT build-compatible with PyTorch 2.x. You'll need PyTorch 1.13.1, or use hacky workarounds.
  - It is possible to build PyTorch 2.3.x against ROCm < 5.7 for RDNA1, but the process is broken after integrating AOTriton. Avoid at all costs.
  - hipBLASLt is created as a dummy library, as it's not yet supported on this architecture while permitting linkage to PyTorch.
  - This PyTorch cannot use flash or memory-efficient attention for transformer models because Triton currently does not implement support for RDNA1.
