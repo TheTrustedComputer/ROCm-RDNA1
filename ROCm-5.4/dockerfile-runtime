@@ -8,7 +8,7 @@ WORKDIR $ROCM_WORKING_DIR
 RUN tar -cvf rocm.tar $ROCM_INSTALL_DIR; \
     tar -cvf torchonnx-wheels.tar *.whl
 
-FROM debian:12-slim
+FROM debian:bookworm-slim
 
 ARG HOME_USER
 ARG ROCM_WORKING_DIR

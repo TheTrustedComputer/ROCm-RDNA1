@@ -4,7 +4,7 @@ export PATH=$ROCM_INSTALL_DIR/bin:$ROCM_INSTALL_DIR/hip/bin:$ROCM_INSTALL_DIR/ll
 
 pushd $ROCM_SOURCE_DIR > /dev/null
 git apply $ROCM_WORKING_DIR/patch/hip_voidcast
-git apply $ROCM_WORKING_DIR/patch/miopen_composable-kernel_gfx101x
+git apply $ROCM_WORKING_DIR/patch/miopen_gfx101x
 git apply $ROCM_WORKING_DIR/patch/migraphx_gfx101x
 git apply $ROCM_WORKING_DIR/patch/rccl_buffer-wbinvl1-vol_gfx101x
 git apply $ROCM_WORKING_DIR/patch/rocrand_gfx101x

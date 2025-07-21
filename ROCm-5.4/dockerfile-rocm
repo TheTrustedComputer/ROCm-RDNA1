@@ -1,4 +1,4 @@
-FROM debian:12-slim
+FROM debian:bookworm-slim
 
 ARG ROCM_WORKING_DIR
 ARG ROCM_INSTALL_DIR
