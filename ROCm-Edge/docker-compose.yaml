@@ -24,9 +24,6 @@ services:
             - ROCM_VERSION=$ROCM_MAJOR_VERSION.$ROCM_MINOR_VERSION.$ROCM_PATCH_VERSION
             - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - LIBRARY_PATH=$LIBRARY_PATH
-        volumes:
-            - $HOME/Docker/ROCm-Edge/script:$ROCM_WORKING_DIR/script
-            - $HOME/Docker/ROCm-Edge/patch:$ROCM_WORKING_DIR/patch
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
     torchonnx_build:
