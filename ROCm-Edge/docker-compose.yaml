@@ -2,6 +2,7 @@ services:
     rocm_build:
         image: rdna1-rocmedge:rocm-build
         container_name: RDNA1_ROCmEdge_Build_Phase
+        entrypoint: ["bash", "build-rocm"]
         build:
             context: .
             dockerfile: dockerfile-rocm
@@ -26,13 +27,12 @@ services:
         volumes:
             - $HOME/Docker/ROCm-Edge/script:$ROCM_WORKING_DIR/script
             - $HOME/Docker/ROCm-Edge/patch:$ROCM_WORKING_DIR/patch
-        working_dir: $ROCM_WORKING_DIR/script
-        stdin_open: true
-        tty: true
+        working_dir: $ROCM_WORKING_DIR
         network_mode: default
     torchonnx_build:
         image: rdna1-rocmedge:torchonnx-build
         container_name: RDNA1_ROCmEdge_TorchONNX_Build_Phase
+        entrypoint: ["bash", "build-torchonnx"]
         build:
             context: .
             dockerfile: dockerfile-torchonnx
