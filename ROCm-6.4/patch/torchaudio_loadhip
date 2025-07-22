@@ -1,0 +1,18 @@
+--- a/TorchAudio/cmake/LoadHIP.cmake
++++ b/TorchAudio/cmake/LoadHIP.cmake
+@@ -140,13 +140,13 @@ macro(find_package_and_print_version PACKAGE_NAME)
+ endmacro()
+ 
+ # Find the HIP Package
+-find_package_and_print_version(HIP 1.0)
++find_package_and_print_version(HIP 6.0)
+ 
+ if(HIP_FOUND)
+   set(PYTORCH_FOUND_HIP TRUE)
+ 
+   # Find ROCM version for checks
+-  file(READ "${ROCM_PATH}/.info/version-dev" ROCM_VERSION_DEV_RAW)
++  file(READ "${ROCM_PATH}/.info/version" ROCM_VERSION_DEV_RAW)
+   string(REGEX MATCH "^([0-9]+)\.([0-9]+)\.([0-9]+)-.*$" ROCM_VERSION_DEV_MATCH ${ROCM_VERSION_DEV_RAW})
+   if(ROCM_VERSION_DEV_MATCH)
+     set(ROCM_VERSION_DEV_MAJOR ${CMAKE_MATCH_1})

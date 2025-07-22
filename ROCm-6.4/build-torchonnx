@@ -1,0 +1,23 @@
+#! /usr/bin/env bash
+
+pushd $ROCM_WORKING_DIR/Torch/third_party > /dev/null
+git apply $ROCM_WORKING_DIR/patch/composable-kernel_gfx101x
+popd > /dev/null
+
+pushd $ROCM_WORKING_DIR > /dev/null
+git apply patch/torchaudio_loadhip
+popd > /dev/null
+
+set -e
+
+start_time=$(date +%s)
+
+pushd $ROCM_WORKING_DIR/script > /dev/null
+for file in *
+do
+    bash $file
+done
+popd > /dev/null
+
+build_time=$(($(date +%s) - $start_time))
+echo -ne "\nTook $build_time second" && [ $build_time -ne 1 ] && echo "s" || echo "."
