@@ -3,7 +3,8 @@
 export PATH=$ROCM_INSTALL_DIR/bin:$ROCM_INSTALL_DIR/lib/llvm/bin:$HOME/.protobuf/bin:$PATH
 
 pushd $ROCM_SOURCE_DIR > /dev/null
-git apply $ROCM_WORKING_DIR/patch/miopen_composable-kernel_gfx101x
+git apply $ROCM_WORKING_DIR/patch/miopen_gfx101x
+git apply $ROCM_WORKING_DIR/patch/composable-kernel_gfx101x
 git apply $ROCM_WORKING_DIR/patch/migraphx_gfx101x
 git apply $ROCM_WORKING_DIR/patch/rocrand_gfx101x
 git apply $ROCM_WORKING_DIR/patch/migraphx_msgpack-cxx

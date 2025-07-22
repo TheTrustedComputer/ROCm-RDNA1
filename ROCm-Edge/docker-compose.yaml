@@ -24,8 +24,8 @@ services:
             - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - LIBRARY_PATH=$LIBRARY_PATH
         volumes:
-            - $HOME/Docker/ROCm-Edge/script:$ROCM_WORKING_DIR/script
-            - $HOME/Docker/ROCm-Edge/patch:$ROCM_WORKING_DIR/patch
+            - ./script:$ROCM_WORKING_DIR/script
+            - ./patch:$ROCM_WORKING_DIR/patch
         working_dir: $ROCM_WORKING_DIR/script
         stdin_open: true
         tty: true

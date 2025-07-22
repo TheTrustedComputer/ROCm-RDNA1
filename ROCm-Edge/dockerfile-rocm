@@ -107,7 +107,7 @@ RUN git clone https://github.com/ROCm/hipFFT -b $ROCM_GIT_TAG_VERSION
 # 28) RCCL
 RUN git clone https://github.com/ROCm/rccl -b $ROCM_GIT_TAG_VERSION
 
-# 29) Composable Kernel (experimental)
+# 29) Composable Kernel
 RUN git clone https://github.com/ROCm/composable_kernel -b $ROCM_GIT_TAG_VERSION
 
 # 30) rocMLIR
@@ -139,4 +139,4 @@ RUN git clone https://github.com/amd/libflame -b 5.1 flame
 RUN git clone https://github.com/amd/blis -b 5.1
 
 COPY build-rocm build-rocm
-COPY experimental experimental
+#COPY experimental experimental

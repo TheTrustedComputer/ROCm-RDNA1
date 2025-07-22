@@ -16,8 +16,7 @@ ARG ROCM_INSTALL_DIR
 ARG HOME_USER
 ARG pacman_args="--noconfirm --needed"
 
-RUN pacman -Syu $pacman_args python-yaml \
-                             tk \
+RUN pacman -Syu $pacman_args python-yaml tk \
                              git \
                              perl-file-which perl-uri \
                              numactl \
