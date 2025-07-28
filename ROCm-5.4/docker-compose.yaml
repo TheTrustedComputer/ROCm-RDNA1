@@ -24,6 +24,8 @@ services:
             - ROCM_INSTALL_DIR=$ROCM_INSTALL_DIR
             - ROCM_PATH=$ROCM_INSTALL_DIR
             - LIBRARY_PATH=$LIBRARY_PATH
+            - COMPILER_FLAGS=$COMPILER_FLAGS
+            - HIPCC_COMPILE_FLAGS_APPEND=$OPTS_FLAGS
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
     torchonnx_build:
@@ -46,9 +48,11 @@ services:
             - ROCM_INSTALL_DIR=$ROCM_INSTALL_DIR
             - ROCM_PATH=$ROCM_INSTALL_DIR
             - LDFLAGS=-Wl,-rpath,$ROCM_INSTALL_DIR/lib
+            - COMPILER_FLAGS=$COMPILER_FLAGS
             - CMAKE_PREFIX_PATH=$ROCM_INSTALL_DIR
             - CMAKE_C_FLAGS=$CMAKE_C_FLAGS
             - CMAKE_CXX_FLAGS=$CMAKE_C_FLAGS
+            - HIPCC_COMPILE_FLAGS_APPEND=$OPTS_FLAGS
         working_dir: $ROCM_WORKING_DIR
         network_mode: default
     runtime:

@@ -6,7 +6,7 @@ cmake \
     -B $ROCM_BUILD_DIR/rocthrust \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/bin/hipcc \
-    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument" \
     -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
     -DHIP_ROOT_DIR="$ROCM_INSTALL_DIR" \
     -DBUILD_TEST=OFF \

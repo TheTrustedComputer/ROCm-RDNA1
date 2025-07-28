@@ -24,7 +24,7 @@ sed -i "s/-include make.check-openblas//g" make.inc
 
 ## Add ROCm library path
 echo "LIB += -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_INSTALL_DIR/lib -Wl,--rpath,$ROCM_INSTALL_DIR/magma/lib" >> make.inc
-echo "INC += -march=native -O3 -s -w -D__HIP_PLATFORM_AMD__" >> make.inc
+echo "INC += $COMPILER_FLAGS -D__HIP_PLATFORM_AMD__" >> make.inc
 
 ## Skip Fortran compilation
 sed -i "s/gfortran//g" make.inc

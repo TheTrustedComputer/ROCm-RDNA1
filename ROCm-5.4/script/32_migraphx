@@ -7,8 +7,8 @@ cmake \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_C_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang \
     -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/llvm/bin/clang++ \
-    -DCMAKE_C_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument -L$HOME/.protobuf/lib -I$ROCM_INSTALL_DIR/include/rocblas" \
-    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument -L$HOME/.protobuf/lib -I$ROCM_INSTALL_DIR/include/rocblas" \
+    -DCMAKE_C_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument -L$HOME/.protobuf/lib -I$ROCM_INSTALL_DIR/include/rocblas" \
+    -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument -L$HOME/.protobuf/lib -I$ROCM_INSTALL_DIR/include/rocblas" \
     -DMIGRAPHX_ENABLE_MLIR=ON \
     -DGPU_TARGETS="$AMDGPU_TARGETS" \
     -DBUILD_TESTING=OFF \

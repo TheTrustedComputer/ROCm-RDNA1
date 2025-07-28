@@ -89,7 +89,7 @@ This distribution tends to have the latest and greatest of just about everything
 
 ## Considerations
 
- - If you plan to run ROCm on multiple cards, modify ``GLOO_SOCKET_IFNAME`` to the name of your active network interface.
+ - If you plan to do distributed training, modify ``GLOO_SOCKET_IFNAME`` to the name of your active network interface.
  - PyTorch 2.2.2 is recommended for security reasons as older ones contain a critical vulnerability that could lead to remote code execution.
  - ROCm 5.3.3 and earlier are NOT build-compatible with PyTorch 2.x. You'll need PyTorch 1.13.1, or use hacky workarounds.
  - It is possible to build PyTorch 2.3.x against ROCm < 5.7 for RDNA1, but the process is broken after integrating AOTriton. Avoid at all costs.

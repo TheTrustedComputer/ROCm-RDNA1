@@ -6,8 +6,8 @@ cmake \
     -B $ROCM_BUILD_DIR/hipsolver \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
-    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
-    -DCMAKE_Fortran_FLAGS="-march=native -O3 -s -w" \
+    -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument" \
+    -DCMAKE_Fortran_FLAGS="$COMPILER_FLAGS" \
     -DGPU_TARGETS="$AMDGPU_TARGETS" \
     -DBUILD_CLIENTS_TESTS=$ENABLE_BUILD_TESTING \
     -G Ninja \

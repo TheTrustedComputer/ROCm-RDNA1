@@ -8,7 +8,7 @@ source .onnx-build-venv/bin/activate
 pushd OnnxRT > /dev/null
 pip install -r requirements-dev.txt
 ./build.sh --config Release \
-           --cmake_extra_defines CMAKE_C_FLAGS="-march=native -O3 -s -w" CMAKE_CXX_FLAGS="-march=native -O3 -s -w" CMAKE_HIP_ARCHITECTURES="$AMDGPU_TARGETS" onnxruntime_USE_COMPOSABLE_KERNEL=OFF \
+           --cmake_extra_defines CMAKE_C_FLAGS="$COMPILER_FLAGS" CMAKE_CXX_FLAGS="$COMPILER_FLAGS" CMAKE_HIP_ARCHITECTURES="$AMDGPU_TARGETS" onnxruntime_USE_COMPOSABLE_KERNEL=OFF \
            --cmake_generator Ninja \
            --build_wheel \
            --parallel \

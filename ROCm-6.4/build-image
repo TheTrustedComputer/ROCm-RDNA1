@@ -14,4 +14,4 @@ docker commit RDNA1_ROCm64_TorchONNX_Build_Phase rdna1-rocm64:final
 echo -e "\e[1m[5/5] Building the runtime image...\e[0m"
 docker-compose up --build --detach runtime
 docker rm RDNA1_ROCm64_Build_Phase RDNA1_ROCm64_TorchONNX_Build_Phase
-docker image rm rdna1-rocm64:rocm-build rdna1-rocm64:intermediate rdna1-rocm64:torchonnx-build rdna1-rocm64:final
+docker image rm rdna1-rocm64:rocm-build rdna1-rocm64:intermediate rdna1-rocm64:torchonnx-build

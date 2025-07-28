@@ -1,4 +1,5 @@
 #include <iostream>
+#include <hip/hip_runtime.h>
 #include <rocsparse/rocsparse.h>
 
 void print_vector(const char *_STR, const float *_VEC, const int _SIZE)

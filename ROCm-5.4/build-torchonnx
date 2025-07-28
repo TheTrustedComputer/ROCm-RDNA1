@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
 
 pushd $ROCM_WORKING_DIR > /dev/null
-git apply patch/torch-2.2_O3
 git apply patch/torch-2.2_numpy-2
+git apply patch/torch-2.2_-O3
 git apply patch/onnxrt-1.16_rocm-version
 git apply patch/onnxrt-1.16_eigen-hash
 popd > /dev/null
