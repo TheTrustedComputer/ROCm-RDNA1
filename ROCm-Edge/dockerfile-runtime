@@ -35,7 +35,7 @@ RUN tar -xvf rocm.tar -C /; \
     tar -xvf blis.tar -C /; \
     rm rocm.tar blis.tar
 
-RUN echo "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/lib/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
+RUN echo -e "$ROCM_INSTALL_DIR/lib\n$ROCM_INSTALL_DIR/lib/roctracer\n$ROCM_INSTALL_DIR/lib/migraphx/lib\n$ROCM_INSTALL_DIR/lib/llvm/lib\n$ROCM_INSTALL_DIR/magma/lib" | tee /etc/ld.so.conf.d/rocm.conf; \
     echo "/opt/blis/lib" | tee /etc/ld.so.conf.d/blis.conf; \
     ldconfig
 

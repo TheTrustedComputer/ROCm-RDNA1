@@ -8,12 +8,12 @@ cmake \
     -B $ROCM_BUILD_DIR/composable-kernel \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
-    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument" \
+    -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument" \
     -DCMAKE_C_COMPILER_LAUNCHER=sccache \
     -DCMAKE_CXX_COMPILER_LAUNCHER=sccache \
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
     -DGPU_TARGETS="$AMDGPU_TARGETS" \
-    -DGPU_ARCHS="gfx908;$AMDGPU_TARGETS" \
+    -DGPU_ARCHS="$AMDGPU_TARGETS" \
     -DBUILD_TESTING=OFF \
     -DDL_KERNELS=ON \
     -G Ninja \

@@ -9,6 +9,9 @@ git apply $ROCM_WORKING_DIR/patch/migraphx_gfx101x
 git apply $ROCM_WORKING_DIR/patch/rocrand_gfx101x
 git apply $ROCM_WORKING_DIR/patch/migraphx_msgpack-cxx
 git apply $ROCM_WORKING_DIR/patch/hipblaslt_dummy
+git apply $ROCM_WORKING_DIR/patch/amdsmi_gcc-15
+git apply $ROCM_WORKING_DIR/patch/rocm-device-libs_cmake-4
+git apply $ROCM_WORKING_DIR/patch/rocr-runtime_gcc-15
 popd > /dev/null
 
 set -e

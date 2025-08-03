@@ -1,0 +1,10 @@
+--- a/ROCR-Runtime/runtime/hsa-runtime/core/inc/amd_elf_image.hpp
++++ b/ROCR-Runtime/runtime/hsa-runtime/core/inc/amd_elf_image.hpp
+@@ -47,6 +47,7 @@
+ #include <sstream>
+ #include <vector>
+ #include <memory>
++#include <cstdint>
+ 
+ namespace rocr {
+ namespace amd {

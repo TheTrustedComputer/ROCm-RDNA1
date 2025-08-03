@@ -23,6 +23,8 @@ services:
             - ROCM_VERSION=$ROCM_MAJOR_VERSION.$ROCM_MINOR_VERSION.$ROCM_PATCH_VERSION
             - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - LIBRARY_PATH=$LIBRARY_PATH
+            - COMPILER_FLAGS=$COMPILER_FLAGS
+            - HIPCC_COMPILE_FLAGS_APPEND=$OPTS_FLAGS
         volumes:
             - ./script:$ROCM_WORKING_DIR/script
             - ./patch:$ROCM_WORKING_DIR/patch
@@ -44,16 +46,20 @@ services:
             - /dev/kfd:/dev/kfd
         environment:
             - HOME_USER=$HOME_USER
-            - AMDGPU_TARGETS=$AMDGPU_TARGETS
             - PYTORCH_ROCM_ARCH=$AMDGPU_TARGETS
             - ROCM_WORKING_DIR=$ROCM_WORKING_DIR
             - ROCM_INSTALL_DIR=$ROCM_INSTALL_DIR
             - ROCM_PATH=$ROCM_INSTALL_DIR
             - LDFLAGS=-Wl,-rpath,$ROCM_INSTALL_DIR/lib
-            - CMAKE_PREFIX_PATH=$ROCM_INSTALL_DIR
+            - COMPILER_FLAGS=$COMPILER_FLAGS
+            - CMAKE_PREFIX_PATH=$ROCM_INSTALL_DIR:/opt/blis
             - CMAKE_C_FLAGS=$CMAKE_C_FLAGS
-            - CMAKE_CXX_FLAGS=$CMAKE_C_FLAGS
+            - CMAKE_CXX_FLAGS=$CMAKE_C_FLAGS -include cstdint -D_GLIBCXX_NO_ASSERTIONS
+            - CMAKE_POLICY_VERSION_MINIMUM=3.5
+            - HIPCC_COMPILE_FLAGS_APPEND=$OPTS_FLAGS -D_GLIBCXX_NO_ASSERTIONS
         working_dir: $ROCM_WORKING_DIR
+        stdin_open: true
+        tty: true
         network_mode: default
     runtime:
         image: rdna1-rocmedge:runtime

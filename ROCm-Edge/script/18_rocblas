@@ -11,8 +11,8 @@ cmake \
     -B $ROCM_BUILD_DIR/rocblas \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_CXX_COMPILER=$ROCM_INSTALL_DIR/lib/llvm/bin/amdclang++ \
-    -DCMAKE_CXX_FLAGS="-march=native -O3 -s -w -Wno-error=unused-command-line-argument $LINK_CBLAS_LIB" \
-    -DAMDGPU_TARGETS="$AMDGPU_TARGETS" \
+    -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument $LINK_CBLAS_LIB" \
+    -DGPU_TARGETS="$AMDGPU_TARGETS" \
     -DTensile_ARCHITECTURE="$AMDGPU_TARGETS" \
     -DTensile_TEST_LOCAL_PATH=$ROCM_SOURCE_DIR/Tensile \
     -DBUILD_WITH_HIPBLASLT=OFF \

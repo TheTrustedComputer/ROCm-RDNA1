@@ -73,6 +73,7 @@ services:
             - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
             - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
             - GLOO_SOCKET_IFNAME=$GLOO_SOCKET_IFNAME
+            - HSA_ENABLE_SDMA=0
         volumes:
             - $SOFTWARE_DIR:/home/$HOME_USER/Apps
             - /dev/shm:/dev/shm

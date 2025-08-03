@@ -1,0 +1,10 @@
+--- a/amdsmi/rocm_smi/include/rocm_smi/rocm_smi_common.h
++++ b/amdsmi/rocm_smi/include/rocm_smi/rocm_smi_common.h
+@@ -28,6 +28,7 @@
+ #include <vector>
+ #include <string>
+ #include <unordered_set>
++#include <cstdint>
+ 
+ #define CHECK_DV_IND_RANGE \
+     amd::smi::RocmSMI& smi = amd::smi::RocmSMI::getInstance(); \

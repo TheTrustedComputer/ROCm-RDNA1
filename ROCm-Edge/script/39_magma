@@ -24,7 +24,7 @@ sed -i "s/-include make.check-openblas//g" make.inc
 
 ## Add ROCm library path (assuming FLAME and BLIS is installed in /opt/blis)
 echo "LIB += -L/opt/blis/lib -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_INSTALL_DIR/lib -Wl,--rpath,$ROCM_INSTALL_DIR/magma/lib -Wl" >> make.inc
-echo "INC += -march=native -O3 -s -w -D__HIP_PLATFORM_AMD__" >> make.inc
+echo "INC += $COMPILER_FLAGS" >> make.inc
 
 ## Skip Fortran compilation
 sed -i "s/gfortran//g" make.inc
