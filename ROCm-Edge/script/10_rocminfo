@@ -14,3 +14,9 @@ cmake \
 
 cmake --build $ROCM_BUILD_DIR/rocminfo
 cmake --install $ROCM_BUILD_DIR/rocminfo --prefix $ROCM_INSTALL_DIR
+
+pushd $ROCM_INSTALL_DIR/bin > /dev/null
+mv -f rocm_agent_enumerator rocm_agent_enumerator.bak
+echo -e '#!/usr/bin/sh\necho "gfx1010\\ngfx1012"' > rocm_agent_enumerator
+chmod +x rocm_agent_enumerator
+popd > /dev/null

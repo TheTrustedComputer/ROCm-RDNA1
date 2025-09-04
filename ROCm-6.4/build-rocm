@@ -4,7 +4,9 @@ export PATH=$ROCM_INSTALL_DIR/bin:$ROCM_INSTALL_DIR/lib/llvm/bin:$HOME/.protobuf
 
 pushd $ROCM_SOURCE_DIR > /dev/null
 git apply $ROCM_WORKING_DIR/patch/miopen_gfx101x
+git apply $ROCM_WORKING_DIR/patch/miopen_conditional-ck
 git apply $ROCM_WORKING_DIR/patch/composable-kernel_gfx101x
+git apply $ROCM_WORKING_DIR/patch/composable-kernel_conditional-ck
 git apply $ROCM_WORKING_DIR/patch/migraphx_gfx101x
 git apply $ROCM_WORKING_DIR/patch/rocrand_gfx101x
 git apply $ROCM_WORKING_DIR/patch/migraphx_msgpack-cxx
@@ -27,3 +29,13 @@ build_time=$(($(date +%s) - $start_time))
 echo -ne "\nTook $build_time second" && [ $build_time -ne 1 ] && echo "s" || echo "."
 
 rm -rf $ROCM_BUILD_DIR
+
+pushd $ROCM_INSTALL_DIR/lib/llvm/bin > /dev/null
+rm -f amdgpu-arch
+mv -f amdgpu-arch.bak amdgpu-arch
+popd > /dev/null
+
+pushd $ROCM_INSTALL_DIR/bin > /dev/null
+rm -f rocm_agent_enumerator
+mv -f rocm_agent_enumerator.bak rocm_agent_enumerator 
+popd > /dev/null

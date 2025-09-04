@@ -26,3 +26,8 @@ pushd $ROCM_INSTALL_DIR > /dev/null
 ln -sf lib/llvm llvm
 popd > /dev/null
 
+pushd $ROCM_INSTALL_DIR/lib/llvm/bin > /dev/null
+mv -f amdgpu-arch amdgpu-arch.bak
+echo -e '#!/usr/bin/sh\necho "gfx1010\\ngfx1012"' > amdgpu-arch
+chmod +x amdgpu-arch
+popd > /dev/null

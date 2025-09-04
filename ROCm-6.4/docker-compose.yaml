@@ -74,7 +74,7 @@ services:
             - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
             - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
             - MIOPEN_FIND_ENFORCE=search
-            - MIOPEN_CHECK_NUMERICS=4
+            - MIOPEN_CHECK_NUMERICS=12
             - GLOO_SOCKET_IFNAME=$GLOO_SOCKET_IFNAME
             - HSA_ENABLE_SDMA=0
         volumes:

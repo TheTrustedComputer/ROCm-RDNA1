@@ -2,6 +2,25 @@
 
 set -e
 
+pushd $ROCM_SOURCE_DIR/MIOpen/src > /dev/null
+
+find . -type f -name "*mha*.cpp" | while read -r mha_source;
+do
+    sed -i "s/MIOPEN_USE_COMPOSABLEKERNEL/MIOPEN_USE_CK_MHA_OPS/g" "$mha_source"
+done
+
+find . -type f -name "*xdl*.cpp" | while read -r xdl_source;
+do
+    sed -i "s/MIOPEN_USE_COMPOSABLEKERNEL/MIOPEN_USE_CK_XDL_OPS/g" "$xdl_source"
+done
+
+sed -i "s/MIOPEN_USE_COMPOSABLEKERNEL/MIOPEN_USE_CK_XDL_OPS/g" \
+    mlo_dir_conv.cpp \
+    solver/conv_ck_igemm_fwd_bias_res_add_activ_fused.cpp \
+    solver/conv_ck_igemm_fwd_bias_activ_fused.cpp
+
+popd > /dev/null
+
 cmake \
     -B $ROCM_BUILD_DIR/miopen \
     -DCMAKE_BUILD_TYPE=Release \
@@ -11,7 +30,7 @@ cmake \
     -DCMAKE_CXX_FLAGS="$COMPILER_FLAGS -Wno-error=unused-command-line-argument" \
     -DGPU_TARGETS="$AMDGPU_TARGETS" \
     -DBUILD_TESTING=OFF \
-    -DMIOPEN_USE_COMPOSABLEKERNEL=OFF \
+    -DMIOPEN_USE_COMPOSABLEKERNEL=ON \
     -DMIOPEN_USE_MLIR=ON \
     -DMIOPEN_USE_HIPBLASLT=OFF \
     -DMIOPEN_BUILD_DRIVER=OFF \

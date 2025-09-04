@@ -4,10 +4,6 @@ pushd $ROCM_WORKING_DIR/Torch/third_party > /dev/null
 git apply $ROCM_WORKING_DIR/patch/composable-kernel_gfx101x
 popd > /dev/null
 
-pushd $ROCM_WORKING_DIR > /dev/null
-git apply patch/torchaudio_loadhip
-popd > /dev/null
-
 set -e
 
 start_time=$(date +%s)

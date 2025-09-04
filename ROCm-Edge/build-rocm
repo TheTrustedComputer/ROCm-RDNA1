@@ -30,3 +30,13 @@ build_time=$(($(date +%s) - $start_time))
 echo -ne "\nTook $build_time second" && [ $build_time -ne 1 ] && echo "s" || echo "."
 
 rm -rf $ROCM_BUILD_DIR
+
+pushd $ROCM_INSTALL_DIR/lib/llvm/bin > /dev/null
+rm -f amdgpu-arch
+mv -f amdgpu-arch.bak amdgpu-arch
+popd > /dev/null
+
+pushd $ROCM_INSTALL_DIR/bin > /dev/null
+rm -f rocm_agent_enumerator
+mv -f rocm_agent_enumerator.bak rocm_agent_enumerator 
+popd > /dev/null

@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-## Not buildable with GCC >= 15 (breaks implicit cstdint headers) at the moment.
-# We will switch to Clang until AMD or GCC devs fix it in the next stable release.
+## Not buildable with GCC >= 15 at the moment.
+# We will switch to Clang until AMD or GCC devs fix it.
 # https://github.com/amd/blis/issues/34
 
 pacman -S --noconfirm --needed clang
