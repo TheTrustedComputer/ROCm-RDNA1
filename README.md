@@ -1,3 +1,5 @@
+### **NOTE: We have replaced our 5500 XTs with 9060 XTs. Therefore, the ROCm-RDNA1 repository will no longer be maintained. Please use [TheRock](https://github.com/ROCm/TheRock) to build the latest ROCm for your card. Thank you for your understanding.**
+
 # ROCm-RDNA1
 
 ROCm build scripts and patches for PyTorch and ONNX Runtime targeting the RDNA1 instruction set.
